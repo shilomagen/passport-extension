@@ -1,75 +1,88 @@
-import React from "react";
-import { Hello } from "@src/components/hello";
-import browser, { Tabs } from "webextension-polyfill";
-import { Scroller } from "@src/components/scroller";
-import css from "./styles.module.css";
+import Button from '@mui/material/Button';
+import React, { useEffect, useState } from 'react';
+import css from './styles.module.css';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+import Slider from '@mui/material/Slider';
+import Box from '@mui/material/Box';
+import Content from '../content.json';
+import { Locations } from '@src/lib/locations';
+import { StorageService, UserMetadata } from '@src/services/storage';
+import { storage } from 'webextension-polyfill';
 
-// // // //
+const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city)));
 
-// Scripts to execute in current tab
-const scrollToTopPosition = 0;
-const scrollToBottomPosition = 9999999;
-
-function scrollWindow(position: number) {
-    window.scroll(0, position);
-}
-
-/**
- * Executes a string of Javascript on the current tab
- * @param code The string of code to execute on the current tab
- */
-function executeScript(position: number): void {
-    // Query for the active tab in the current window
-    browser.tabs
-        .query({ active: true, currentWindow: true })
-        .then((tabs: Tabs.Tab[]) => {
-            // Pulls current tab from browser.tabs.query response
-            const currentTab: Tabs.Tab | number = tabs[0];
-
-            // Short circuits function execution is current tab isn't found
-            if (!currentTab) {
-                return;
-            }
-            const currentTabId: number = currentTab.id as number;
-
-            // Executes the script in the current tab
-            browser.scripting
-                .executeScript({
-                    target: {
-                        tabId: currentTabId,
-                    },
-                    func: scrollWindow,
-                    args: [position],
-                })
-                .then(() => {
-                    console.log("Done Scrolling");
-                });
-        });
-}
-
-// // // //
+const storageService = new StorageService();
 
 export function Popup() {
-    // Sends the `popupMounted` event
-    React.useEffect(() => {
-        browser.runtime.sendMessage({ popupMounted: true });
-    }, []);
+  const [id, setId] = useState('');
+  const [phone, setPhone] = useState('');
+  const [cities, setCities] = useState<string[]>([]);
+  const [days, setDays] = useState(0);
 
-    // Renders the component tree
-    return (
-        <div className={css.popupContainer}>
-            <div className="mx-4 my-4">
-                <Hello />
-                <hr />
-                <Scroller
-                    onClickScrollTop={() => {
-                        executeScript(scrollToTopPosition);
-                    }}
-                    onClickScrollBottom={() => {
-                        executeScript(scrollToBottomPosition);
-                    }}
-                />
-            </div>
-        </div>
-    );
+  const submitEnabled = id && phone && cities.length > 0;
+
+  const initializeMetadata = (metadata: UserMetadata) => {
+    const { cities, phone, id } = metadata;
+    setId(id);
+    setPhone(phone);
+    setCities(cities);
+  };
+
+  useEffect(() => {
+    storageService.getUserMetadata().then((metadata) => {
+      if (metadata) {
+        initializeMetadata(metadata);
+      }
+    });
+  }, []);
+
+  const start = async () => {
+    await storageService.setUserMetadata({ id, phone, cities });
+    chrome.tabs.create({
+      active: true,
+      url: 'https://myvisit.com/#!/home/provider/56',
+    });
+  };
+
+  return (
+    <div className={css.popupContainer}>
+      <Box>
+        <TextField name="id" value={id} label={Content.idLabel} onChange={(e) => setId(e.target.value)} />
+        <TextField name="phone" value={phone} label={Content.phoneLabel} onChange={(e) => setPhone(e.target.value)} />
+      </Box>
+      <Box>
+        <Autocomplete
+          multiple
+          id="cites-select"
+          options={ALL_CITIES}
+          value={cities}
+          onChange={(_, values) => setCities(values)}
+          getOptionLabel={(option) => option}
+          noOptionsText={Content.noCitiesFound}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="standard"
+              label={Content.citiesLabel}
+              placeholder={Content.citiesPlaceholder}
+            />
+          )}
+        />
+      </Box>
+      <Slider
+        aria-label="Volume"
+        value={days}
+        min={1}
+        max={365}
+        step={1}
+        onChange={(e, value) => setDays(value as number)}
+      />
+      <Box>
+        <Button onClick={start} variant="contained" disabled={!submitEnabled}>
+          {Content.searchCta}
+        </Button>
+      </Box>
+    </div>
+  );
 }

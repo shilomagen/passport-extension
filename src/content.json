@@ -1,0 +1,9 @@
+{
+  "idLabel": "תעודת זהות",
+  "phoneLabel": "טלפון",
+  "citiesLabel": "ערים",
+  "citiesPlaceholder": "חפשו ערים...",
+  "noCitiesFound": "לא נמצאו ערים",
+  "searchCta": "חפש לי תור",
+  "numOfDays": "מספר הימים"
+}

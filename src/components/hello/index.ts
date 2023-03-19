@@ -1,1 +1,0 @@
-export { Hello } from "./component";
