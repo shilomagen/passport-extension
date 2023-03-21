@@ -6,6 +6,11 @@ import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
 import { useLoggedIn } from '@src/hooks/loggedIn';
 import debounce from 'lodash.debounce';
+import browser from 'webextension-polyfill';
+import { ActionTypes } from '@src/action-types';
+import GamKenBot from '@src/assets/gamkenbot.png';
+
+const { Title } = Typography;
 
 const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).map((value) => ({ value }));
 
@@ -31,7 +36,6 @@ export const App: FunctionComponent = () => {
       setUserMetadata(newMetadata);
       setDataInCache(newMetadata);
     };
-
   useEffect(() => {
     storageService.getUserMetadata().then((metadata) => {
       if (metadata) {
@@ -39,7 +43,6 @@ export const App: FunctionComponent = () => {
       }
     });
   }, []);
-
   const goToLogin = () => {
     chrome.tabs.create({
       active: true,
@@ -48,46 +51,44 @@ export const App: FunctionComponent = () => {
   };
 
   const start = async () => {
-    await storageService.setUserMetadata({ id, phone, cities });
-    chrome.tabs.create({
-      active: true,
-      url: 'https://myvisit.com/#!/home/provider/56',
-    });
+    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tabs[0]) {
+      await browser.tabs.sendMessage(tabs[0].id!, { action: ActionTypes.StartSearch });
+    }
   };
 
   return (
-    <div className={styles.popupContainer}>
-      <Typography>{Content.title}</Typography>
+    <div className={styles.container}>
       <div>
-        <Input
-          addonBefore={Content.id.label}
-          name="id"
-          value={userMetadata.id}
-          placeholder={Content.id.placeholder}
-          onChange={(e) => setMetadata('id')(e.target.value)}
-        />
-        <Input
-          addonBefore={Content.phone.label}
-          name="phone"
-          value={userMetadata.phone}
-          placeholder={Content.phone.placeholder}
-          onChange={(e) => setMetadata('phone')(e.target.value)}
-        />
+        <Title level={2}>{Content.title}</Title>
+        <img src={GamKenBot} />
       </div>
-      <div>
-        <Select
-          options={ALL_CITIES}
-          value={userMetadata.cities}
-          placeholder={Content.citiesLabel}
-          onChange={setMetadata('cities')}
-          mode="multiple"
-          className="w-full"
-          placement={'bottomRight'}
-        />
-      </div>
-      <div>
-        <DatePicker placeholder={Content.maxDateForAppointment} placement={'bottomRight'} />
-      </div>
+      <Input
+        className={styles.inputContainer}
+        addonBefore={Content.id.label}
+        name="id"
+        value={userMetadata.id}
+        placeholder={Content.id.placeholder}
+        onChange={(e) => setMetadata('id')(e.target.value)}
+      />
+      <Input
+        className={styles.inputContainer}
+        addonBefore={Content.phone.label}
+        name="phone"
+        value={userMetadata.phone}
+        placeholder={Content.phone.placeholder}
+        onChange={(e) => setMetadata('phone')(e.target.value)}
+      />
+      <Select
+        options={ALL_CITIES}
+        value={userMetadata.cities}
+        placeholder={Content.citiesLabel}
+        onChange={setMetadata('cities')}
+        mode="multiple"
+        listHeight={200}
+        className={styles.selectContainer}
+      />
+      <DatePicker placeholder={Content.maxDateForAppointment} className={styles.datePickerContainer} />
       <div>
         <Button onClick={goToLogin} disabled={!submitEnabled}>
           {loggedIn ? Content.buttons.loggedIn : Content.buttons.login}

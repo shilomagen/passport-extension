@@ -11,7 +11,7 @@ import { ActionTypes } from '@src/action-types';
 browser.runtime.onMessage.addListener(async (message) => {
   if (message.action === ActionTypes.IsLoggedIn) {
     await setLoggedIn();
-  } else {
+  } else if (message.action === ActionTypes.StartSearch) {
     await findSlot();
   }
 });
@@ -45,10 +45,13 @@ async function findSlot() {
   if (preparedVisit.status === ResponseStatus.Success) {
     const locations = Locations.filter((location) => info?.cities.includes(location.city));
     const slotsFinder = new SlotsFinder(httpService, locations);
-    const slots = await slotsFinder.find(500);
-    if (slots[0]) {
-      const appointment = await appointmentHandler.setAppointment(preparedVisit.data, slots[0]);
-      console.log(appointment);
-    }
+    const intervalId = setInterval(async () => {
+      const slots = await slotsFinder.find(100);
+      if (slots[0]) {
+        const appointment = await appointmentHandler.setAppointment(preparedVisit.data, slots[0]);
+        console.log(appointment);
+        clearInterval(intervalId);
+      }
+    }, 30000);
   }
 }

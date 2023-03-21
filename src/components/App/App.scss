@@ -1,5 +1,21 @@
-.popupContainer {
-  min-width: 500px;
+.container {
   min-height: 400px;
-  padding: 20px 40px;
+  padding: 20px;
+  min-width: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputContainer {
+  margin-bottom: 20px;
+}
+
+.selectContainer {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.datePickerContainer {
+  margin-bottom: 20px;
+  width: 250px;
 }
