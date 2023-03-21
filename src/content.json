@@ -1,9 +1,21 @@
 {
-  "idLabel": "תעודת זהות",
-  "phoneLabel": "טלפון",
+  "id": {
+    "label": "תעודת זהות",
+    "placeholder": "אנא הזן תעודת זהות..."
+  },
+  "phone": {
+    "label": "טלפון",
+    "placeholder": "אנא הזן ספרות בלבד שמתחילות ב05..."
+  },
   "citiesLabel": "ערים",
   "citiesPlaceholder": "חפשו ערים...",
   "noCitiesFound": "לא נמצאו ערים",
-  "searchCta": "חפש לי תור",
-  "numOfDays": "מספר הימים"
+  "buttons": {
+    "search": "חפשו לי תור",
+    "login": "התחברו",
+    "loggedIn": "אתם מחוברים!"
+  },
+  "numOfDays": "מספר הימים",
+  "maxDateForAppointment": "תאריך מקסימלי לתור",
+  "title": "שמטובסקי"
 }

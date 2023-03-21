@@ -6,14 +6,34 @@ import { Locations } from '@src/lib/locations';
 import { VisitService } from '@src/lib/visit';
 import { AppointmentHandler } from '@src/lib/appointment-handler';
 import { ResponseStatus } from '@src/lib/internal-types';
+import { ActionTypes } from '@src/action-types';
 
-browser.runtime.onMessage.addListener(findSlot);
+browser.runtime.onMessage.addListener(async (message) => {
+  if (message.action === ActionTypes.IsLoggedIn) {
+    await setLoggedIn();
+  } else {
+    await findSlot();
+  }
+});
 
 const storageService = new StorageService();
+const httpService = new HttpService();
+
+async function setLoggedIn() {
+  const userInfo = await httpService.getUserInfo();
+  const isLoggedIn = userInfo?.Results?.isAnonymous === false;
+  if (isLoggedIn) {
+    await storageService.setLoggedIn(true);
+  } else {
+    await storageService.setLoggedIn(false);
+    const userMetadata = await storageService.getUserMetadata();
+    (document.querySelector('#mobileNumber') as HTMLInputElement).value = userMetadata?.phone || '';
+  }
+}
 
 async function findSlot() {
   const info = await storageService.getUserMetadata();
-  const httpService = new HttpService();
+
   const visitService = new VisitService(httpService);
   const appointmentHandler = new AppointmentHandler(httpService);
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Popup } from '../component';
 import { ComponentMeta } from '@storybook/react';
+import { Popup } from '@src/popup/popup';
 
 export default {
   title: 'Components/Popup',

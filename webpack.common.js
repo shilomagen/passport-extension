@@ -1,14 +1,17 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: {
-    backgroundPage: path.join(__dirname, 'src/backgroundPage.ts'),
-    popup: path.join(__dirname, 'src/popup/index.tsx'),
-    contentScript: './src/contentScript.ts',
+    'background-page': path.join(__dirname, 'src/background-page.ts'),
+    popup: path.join(__dirname, 'src/popup/popup.tsx'),
+    'content-script': './src/content-script.ts',
   },
   output: {
-    path: path.join(__dirname, 'dist/js'),
+    path: path.join(__dirname, 'dist'),
     filename: '[name].js',
+    clean: true,
   },
   module: {
     rules: [
@@ -17,30 +20,26 @@ module.exports = {
         test: /\.tsx?$/,
         use: 'ts-loader',
       },
-      // Treat src/css/app.css as a global stylesheet
       {
-        test: /\app.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
-      },
-      // Load .module.css files as CSS modules
-      {
-        test: /\.module.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-            },
-          },
-          'postcss-loader',
-        ],
+        test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+        // More information here https://webpack.js.org/guides/asset-modules/
+        type: 'asset',
       },
     ],
   },
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [{ from: 'src/assets', to: './assets' }, { from: './src/manifest.json' }],
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'popup.html',
+      template: 'src/popup/popup.html',
+      chunks: ['popup'],
+    }),
+  ],
   // Setup @src path resolution for TypeScript files
   resolve: {
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '.json'],
     alias: {
       '@src': path.resolve(__dirname, 'src/'),
     },

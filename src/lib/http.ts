@@ -18,6 +18,7 @@ import {
 import { DateUtils } from './utils';
 import { EnrichedService, Location, Service } from './internal-types';
 import { toLocation, toService } from './mappers';
+import { GetUserInfoResponse } from '@src/lib/api/user-info';
 
 const BaseURL = 'https://central.myvisit.com/CentralAPI';
 
@@ -51,6 +52,7 @@ export const Urls = {
   setAppointment: `${BaseURL}/AppointmentSet`,
   cancelAppointment: `${BaseURL}/AppointmentCancel`,
   prepareVisit: `${BaseURL}/Organization/56/PrepareVisit`,
+  getUserInfo: `${BaseURL}/UserGetInfo`,
   answer: (visitToken: string) => `${BaseURL}/PreparedVisit/${visitToken}/Answer`,
 };
 
@@ -135,5 +137,9 @@ export class HttpService {
         },
       })
       .then((res) => res.data);
+  }
+
+  public getUserInfo(): Promise<GetUserInfoResponse | null> {
+    return this.httpClient.get(Urls.getUserInfo).then((res) => res.data);
   }
 }

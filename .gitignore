@@ -1,9 +1,10 @@
-dist/js/*
 storybook-static/*
 
 /node_modules
 npm-debug.log
 yarn-error.log
+
+dist
 
 .DS_Store
 .idea
