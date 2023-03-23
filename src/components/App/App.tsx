@@ -8,25 +8,37 @@ import { useLoggedIn } from '@src/hooks/loggedIn';
 import debounce from 'lodash.debounce';
 import browser from 'webextension-polyfill';
 import { ActionTypes } from '@src/action-types';
-import GamKenBot from '@src/assets/gamkenbot.png';
+import GamKenBot from '@src/assets/gamkenbot.svg';
+import { Consent } from '@src/components/Consent/Consent';
+import dayjs from 'dayjs';
+import addDays from 'date-fns/addDays';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).map((value) => ({ value }));
 
 const storageService = new StorageService();
 
 export const App: FunctionComponent = () => {
-  const [userMetadata, setUserMetadata] = useState<UserMetadata>({ phone: '', cities: [], id: '' });
-  const { id, phone, cities } = userMetadata;
+  const [userMetadata, setUserMetadata] = useState<UserMetadata>({
+    phone: '',
+    cities: [],
+    id: '',
+    lastDate: addDays(new Date(), 14).getTime(),
+  });
+  const [agreed, setAgreed] = useState(false);
   const loggedIn = useLoggedIn();
 
-  const submitEnabled = id && phone && cities.length > 0;
+  console.log(loggedIn);
+  const { id, phone, cities, lastDate } = userMetadata;
+
+  const submitEnabled = id && phone && cities.length > 0 && agreed && lastDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id } = metadata;
-    setUserMetadata({ cities, phone, id });
+    const { cities, phone, id, lastDate } = metadata;
+
+    setUserMetadata({ cities, phone, id, lastDate });
   };
 
   const setMetadata =
@@ -43,6 +55,12 @@ export const App: FunctionComponent = () => {
       }
     });
   }, []);
+
+  const onDateChange = (dateString: string) => {
+    const dateSelected = new Date(dateString);
+    setMetadata('lastDate')(new Date(dateSelected).getTime());
+  };
+
   const goToLogin = () => {
     chrome.tabs.create({
       active: true,
@@ -61,7 +79,9 @@ export const App: FunctionComponent = () => {
     <div className={styles.container}>
       <div>
         <Title level={2}>{Content.title}</Title>
-        <img src={GamKenBot} />
+        <div className={styles.logoContainer}>
+          <GamKenBot className={styles.logo} />
+        </div>
       </div>
       <Input
         className={styles.inputContainer}
@@ -88,12 +108,21 @@ export const App: FunctionComponent = () => {
         listHeight={200}
         className={styles.selectContainer}
       />
-      <DatePicker placeholder={Content.maxDateForAppointment} className={styles.datePickerContainer} />
-      <div>
+      <Text>{Content.maxDateForAppointment.title}</Text>
+      <DatePicker
+        placeholder={Content.maxDateForAppointment.placeholder}
+        className={styles.datePickerContainer}
+        value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
+        onChange={(_, dateString) => onDateChange(dateString)}
+      />
+      <div className={styles.consentContainer}>
+        <Consent onConsentChanged={setAgreed} />
+      </div>
+      <div className={styles.buttonContainer}>
         <Button onClick={goToLogin} disabled={!submitEnabled}>
           {loggedIn ? Content.buttons.loggedIn : Content.buttons.login}
         </Button>
-        <Button onClick={start} disabled={!submitEnabled || !loggedIn}>
+        <Button onClick={start} disabled={!loggedIn || !submitEnabled}>
           {Content.buttons.search}
         </Button>
       </div>

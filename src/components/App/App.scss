@@ -19,3 +19,22 @@
   margin-bottom: 20px;
   width: 250px;
 }
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.logo {
+  width: 140px;
+  height: 140px;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+}
+
+.consentContainer {
+  margin-bottom: 20px;
+}

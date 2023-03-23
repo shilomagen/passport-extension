@@ -16,6 +16,14 @@
     "loggedIn": "אתם מחוברים!"
   },
   "numOfDays": "מספר הימים",
-  "maxDateForAppointment": "תאריך מקסימלי לתור",
-  "title": "גם כן בוט"
+  "maxDateForAppointment": {
+    "title": "תאריך מקסימלי לתור:",
+    "placeholder": "בחרו תאריך מקסימלי לתור..."
+  },
+  "title": "גם כן בוט",
+  "consent": {
+    "prefix": "בהרצת הבוט, אתם מאשרים את",
+    "termsAndConditions": "תנאי השימוש",
+    "suffix": "של חברת myVisit"
+  }
 }
