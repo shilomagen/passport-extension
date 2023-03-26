@@ -15,6 +15,11 @@
     "login": "התחברו",
     "loggedIn": "אתם מחוברים!"
   },
+  "statuses": {
+    "connected": "מחובר",
+    "disconnected": "מנותק"
+  },
+
   "numOfDays": "מספר הימים",
   "maxDateForAppointment": {
     "title": "תאריך מקסימלי לתור:",

@@ -26,10 +26,13 @@ async function setLoggedIn() {
     await storageService.setLoggedIn(true);
   } else {
     await storageService.setLoggedIn(false);
-    const userMetadata = await storageService.getUserMetadata();
-    (document.querySelector('#mobileNumber') as HTMLInputElement).value = userMetadata?.phone || '';
   }
 }
+
+const onAuthFailed = (intervalId: NodeJS.Timeout) => {
+  void storageService.setLoggedIn(false);
+  clearInterval(intervalId);
+};
 
 async function findSlot() {
   const info = await storageService.getUserMetadata();
@@ -42,6 +45,7 @@ async function findSlot() {
   }
 
   const preparedVisit = await visitService.prepare(info!);
+
   if (preparedVisit.status === ResponseStatus.Success) {
     const locations = Locations.filter((location) => info?.cities.includes(location.city));
     const slotsFinder = new SlotsFinder(httpService, locations);
@@ -53,5 +57,6 @@ async function findSlot() {
         clearInterval(intervalId);
       }
     }, 30000);
+    httpService.addRejectInterceptor(() => onAuthFailed(intervalId));
   }
 }

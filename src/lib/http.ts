@@ -1,11 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
-import { MockPosition, OrganizationID, ServiceIds } from './constants';
+import { MockPosition, ServiceIds } from './constants';
 import {
   AnswerQuestionRequest,
   AppointmentSetRequest,
   AppointmentSetResponse,
-  LocationSearchRequest,
-  LocationSearchResponse,
   LocationServicesRequest,
   LocationServicesResponse,
   PrepareVisitData,
@@ -16,8 +14,8 @@ import {
   SearchAvailableSlotsResponse,
 } from './api';
 import { DateUtils } from './utils';
-import { EnrichedService, Location, Service } from './internal-types';
-import { toLocation, toService } from './mappers';
+import { EnrichedService, Service } from './internal-types';
+import { toService } from './mappers';
 import { GetUserInfoResponse } from '@src/lib/api/user-info';
 
 const BaseURL = 'https://central.myvisit.com/CentralAPI';
@@ -73,13 +71,17 @@ export class HttpService {
     });
   }
 
-  public async getLocations(): Promise<Location[]> {
-    const params: LocationSearchRequest = { organizationId: OrganizationID };
-    const results = await this.httpClient
-      .get<LocationSearchResponse>(Urls.locationSearch, { params })
-      .then((res) => res.data);
-    return (results.Results ?? []).map(toLocation);
-  }
+  public addRejectInterceptor = (func: () => void) => {
+    this.httpClient.interceptors.response.use(
+      (res) => res,
+      (error) => {
+        const status = error.response.status;
+        if (status === 401 || status === 403) {
+          func();
+        }
+      },
+    );
+  };
 
   public async getServiceIdByLocationId(
     locationId: number,

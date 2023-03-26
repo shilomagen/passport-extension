@@ -4,7 +4,6 @@ import { Button, DatePicker, Input, Select, Typography } from 'antd';
 import Content from '@src/content.json';
 import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
-import { useLoggedIn } from '@src/hooks/loggedIn';
 import debounce from 'lodash.debounce';
 import browser from 'webextension-polyfill';
 import { ActionTypes } from '@src/action-types';
@@ -12,6 +11,7 @@ import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
 import dayjs from 'dayjs';
 import addDays from 'date-fns/addDays';
+import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
 
 const { Title, Text } = Typography;
 
@@ -26,13 +26,20 @@ export const App: FunctionComponent = () => {
     id: '',
     lastDate: addDays(new Date(), 14).getTime(),
   });
-  const [agreed, setAgreed] = useState(false);
-  const loggedIn = useLoggedIn();
+  const [consent, setConsent] = useState(false);
 
-  console.log(loggedIn);
+  useEffect(() => {
+    storageService.getConsent().then(setConsent);
+  }, []);
+
+  const setUserConsent = (val: boolean) => {
+    setConsent(val);
+    void storageService.setConsent(val);
+  };
+
   const { id, phone, cities, lastDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && agreed && lastDate > 0;
+  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
@@ -61,22 +68,15 @@ export const App: FunctionComponent = () => {
     setMetadata('lastDate')(new Date(dateSelected).getTime());
   };
 
-  const goToLogin = () => {
-    chrome.tabs.create({
-      active: true,
-      url: 'https://myvisit.com/#!/home/signin/',
-    });
-  };
-
   const start = async () => {
-    const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-    if (tabs[0]) {
-      await browser.tabs.sendMessage(tabs[0].id!, { action: ActionTypes.StartSearch });
-    }
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    console.log(tab);
+    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.StartSearch });
   };
 
   return (
     <div className={styles.container}>
+      <LoginStatus />
       <div>
         <Title level={2}>{Content.title}</Title>
         <div className={styles.logoContainer}>
@@ -116,13 +116,10 @@ export const App: FunctionComponent = () => {
         onChange={(_, dateString) => onDateChange(dateString)}
       />
       <div className={styles.consentContainer}>
-        <Consent onConsentChanged={setAgreed} />
+        <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>
       <div className={styles.buttonContainer}>
-        <Button onClick={goToLogin} disabled={!submitEnabled}>
-          {loggedIn ? Content.buttons.loggedIn : Content.buttons.login}
-        </Button>
-        <Button onClick={start} disabled={!loggedIn || !submitEnabled}>
+        <Button onClick={start} disabled={!submitEnabled}>
           {Content.buttons.search}
         </Button>
       </div>

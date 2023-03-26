@@ -6,10 +6,11 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 const TERMS_AND_CONDITIONS_URL = 'https://myvisit.com/templates/directives/termsDialog.html';
 
 export interface IConsentProps {
+  consent: boolean;
   onConsentChanged: (value: boolean) => void;
 }
 
-export const Consent: FunctionComponent<IConsentProps> = ({ onConsentChanged }) => {
+export const Consent: FunctionComponent<IConsentProps> = ({ onConsentChanged, consent }) => {
   const onTermsAndConditionsClick = () => {
     chrome.tabs.create({
       active: true,
@@ -20,7 +21,7 @@ export const Consent: FunctionComponent<IConsentProps> = ({ onConsentChanged }) 
   const onCheckboxChanged = (e: CheckboxChangeEvent) => onConsentChanged(e.target.checked);
 
   return (
-    <Checkbox onChange={onCheckboxChanged}>
+    <Checkbox onChange={onCheckboxChanged} checked={consent}>
       {Content.prefix}{' '}
       <a href="" onClick={onTermsAndConditionsClick}>
         {Content.termsAndConditions}
