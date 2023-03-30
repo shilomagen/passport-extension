@@ -7,6 +7,7 @@ import { VisitService } from '@src/lib/visit';
 import { AppointmentHandler } from '@src/lib/appointment-handler';
 import { ResponseStatus } from '@src/lib/internal-types';
 import { ActionTypes } from '@src/action-types';
+import differenceInDays from 'date-fns/differenceInDays';
 
 browser.runtime.onMessage.addListener(async (message) => {
   if (message.action === ActionTypes.IsLoggedIn) {
@@ -36,7 +37,6 @@ const onAuthFailed = (intervalId: NodeJS.Timeout) => {
 
 async function findSlot() {
   const info = await storageService.getUserMetadata();
-
   const visitService = new VisitService(httpService);
   const appointmentHandler = new AppointmentHandler(httpService);
 
@@ -44,13 +44,14 @@ async function findSlot() {
     console.log('Data was not initialized yet');
   }
 
+  const daysDiff = differenceInDays(new Date(info!.lastDate), new Date());
   const preparedVisit = await visitService.prepare(info!);
 
   if (preparedVisit.status === ResponseStatus.Success) {
     const locations = Locations.filter((location) => info?.cities.includes(location.city));
     const slotsFinder = new SlotsFinder(httpService, locations);
     const intervalId = setInterval(async () => {
-      const slots = await slotsFinder.find(100);
+      const slots = await slotsFinder.find(daysDiff);
       if (slots[0]) {
         const appointment = await appointmentHandler.setAppointment(preparedVisit.data, slots[0]);
         console.log(appointment);

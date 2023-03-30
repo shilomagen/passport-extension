@@ -17,6 +17,14 @@ const browser: any = {
       return;
     },
   },
+  storage: {
+    onChanged: {
+      addListener: jest.fn(),
+    },
+    local: {
+      get: jest.fn().mockResolvedValue({}),
+    },
+  },
 };
 export default browser;
 

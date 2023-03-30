@@ -70,7 +70,6 @@ export const App: FunctionComponent = () => {
 
   const start = async () => {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    console.log(tab);
     await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.StartSearch });
   };
 

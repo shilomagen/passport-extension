@@ -79,17 +79,17 @@ module.exports = {
   // The root directory that Jest should scan for tests and modules within
   // rootDir: null,
   // A list of paths to directories that Jest should use to search for files in
-  roots: ['<rootDir>/src'],
+  roots: ['<rootDir>'],
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
   // The paths to modules that run some code to configure or set up the testing environment before each test
-  // setupFiles: [],
+  setupFiles: [],
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  // setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['./test/setupTests.ts'],
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
   // The test environment that will be used for testing
-  // testEnvironment: "jest-environment-jsdom",
+  testEnvironment: 'jest-environment-jsdom',
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
   // Adds a location field to test results
@@ -115,6 +115,7 @@ module.exports = {
   // transform: null,
   transform: {
     '\\.tsx?$': 'ts-jest',
+    '^.+\\.svg$': 'jest-transformer-svg',
   },
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: ["/node_modules/"],
