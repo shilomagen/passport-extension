@@ -21,9 +21,10 @@
   },
 
   "numOfDays": "מספר הימים",
-  "maxDateForAppointment": {
-    "title": "תאריך מקסימלי לתור:",
-    "placeholder": "בחרו תאריך מקסימלי לתור..."
+  "DateTimeSelectorTitle": {
+    "title": "תאריך מקסימלי ושעה מועדפת לתור:",
+    "placeholderDate": "בחרו תאריך מקסימלי לתור...",
+    "placeholderTime": "בחרו שעה מועדפת לתור..."
   },
   "title": "גם כן בוט",
   "consent": {

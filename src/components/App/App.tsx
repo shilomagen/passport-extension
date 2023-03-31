@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { StorageService, UserMetadata } from '@src/services/storage';
-import { Button, DatePicker, Input, Select, Typography } from 'antd';
+import { Button, DatePicker, TimePicker, Input, Select, Typography } from 'antd';
 import Content from '@src/content.json';
 import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
@@ -12,6 +12,7 @@ import { Consent } from '@src/components/Consent/Consent';
 import dayjs from 'dayjs';
 import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
+const format = 'HH:mm';
 
 const { Title, Text } = Typography;
 
@@ -25,6 +26,7 @@ export const App: FunctionComponent = () => {
     cities: [],
     id: '',
     lastDate: addDays(new Date(), 14).getTime(),
+    preferredTime: '',
   });
   const [consent, setConsent] = useState(false);
 
@@ -37,15 +39,15 @@ export const App: FunctionComponent = () => {
     void storageService.setConsent(val);
   };
 
-  const { id, phone, cities, lastDate } = userMetadata;
+  const { id, phone, cities, lastDate, preferredTime } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
+  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0 && preferredTime;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id, lastDate } = metadata;
+    const { cities, phone, id, lastDate, preferredTime } = metadata;
 
-    setUserMetadata({ cities, phone, id, lastDate });
+    setUserMetadata({ cities, phone, id, lastDate, preferredTime });
   };
 
   const setMetadata =
@@ -67,6 +69,18 @@ export const App: FunctionComponent = () => {
     const dateSelected = new Date(dateString);
     setMetadata('lastDate')(new Date(dateSelected).getTime());
   };
+
+  const onPreferredTimeChange = (preferredTime: string) => {
+    setMetadata('preferredTime')(preferredTime);
+  };
+
+  const disabledTime = (current: dayjs.Dayjs) => {
+    const disabledHours = [0, 1, 2, 3, 4, 5, 6, 18, 19, 20, 21, 22, 23];
+    return {
+      disabledHours: () => disabledHours,
+    };
+  };
+
 
   const start = async () => {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -107,13 +121,22 @@ export const App: FunctionComponent = () => {
         listHeight={200}
         className={styles.selectContainer}
       />
-      <Text>{Content.maxDateForAppointment.title}</Text>
+      <Text>{Content.DateTimeSelectorTitle.title}</Text>
       <DatePicker
-        placeholder={Content.maxDateForAppointment.placeholder}
+        placeholder={Content.DateTimeSelectorTitle.placeholderDate}
         className={styles.datePickerContainer}
         value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
         onChange={(_, dateString) => onDateChange(dateString)}
-      />
+        />
+      <TimePicker
+        placeholder={Content.DateTimeSelectorTitle.placeholderTime}
+        className={styles.timePickerContainer}
+        format={format}
+        disabledTime={disabledTime}
+        hideDisabledOptions={true}
+        value={userMetadata.preferredTime ? dayjs(userMetadata.preferredTime, format) : null}
+        onChange={(_, timeSelected) => onPreferredTimeChange(timeSelected)}
+        />
       <div className={styles.consentContainer}>
         <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>

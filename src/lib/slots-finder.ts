@@ -4,12 +4,12 @@ import { toCalendarSlot, toEnrichedSlot } from './mappers';
 import { DateUtils } from './utils';
 
 export class SlotsFinder {
-  constructor(private readonly httpService: HttpService, private readonly locations: Location[]) {}
+  constructor(private readonly httpService: HttpService, private readonly locations: Location[], private readonly preferredTime: string) {}
 
   private async handleSlotsForCalendar(enrichedService: EnrichedService, location: Location): Promise<EnrichedSlot[]> {
     const { calendarId, serviceId } = enrichedService;
     const slots = await this.httpService.getAvailableSlotByCalendar(calendarId, serviceId);
-    const enrichedSlots = slots
+    const enrichedSlots = this.findClosestSlot(slots, this.preferredTime)
       .map((slot) => toCalendarSlot(enrichedService, slot))
       .map((s) => toEnrichedSlot(s, location));
     return enrichedSlots;
@@ -36,6 +36,16 @@ export class SlotsFinder {
     return loopWithDelay(relevantCalendars, (enrichedService) =>
       this.handleSlotsForCalendar(enrichedService, location),
     ).then((res) => res.flat());
+  }
+
+  private findClosestSlot(slots: number[], preferredTime: string): number[] {
+    const preferred_slot = DateUtils.timeStringToMinutesAfterMidnight(preferredTime)
+    const closestSlot =  slots.reduce((closest, current) =>
+      Math.abs(current - preferred_slot) < Math.abs(closest - preferred_slot) ? current : closest
+    );
+
+    const closestSlots = slots.filter((number) => number === closestSlot);
+    return closestSlots;
   }
 
   async find(maxDaysUntilAppointment: number): Promise<EnrichedSlot[]> {
