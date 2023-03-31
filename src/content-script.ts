@@ -49,7 +49,7 @@ async function findSlot() {
 
   if (preparedVisit.status === ResponseStatus.Success) {
     const locations = Locations.filter((location) => info?.cities.includes(location.city));
-    const slotsFinder = new SlotsFinder(httpService, locations);
+    const slotsFinder = new SlotsFinder(httpService, locations, info!.preferredTime);
     const intervalId = setInterval(async () => {
       const slots = await slotsFinder.find(daysDiff);
       if (slots[0]) {
