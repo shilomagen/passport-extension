@@ -5,13 +5,14 @@ import Content from '@src/content.json';
 import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
 import debounce from 'lodash.debounce';
-import browser from 'webextension-polyfill';
+import browser, { Tabs } from 'webextension-polyfill';
 import { ActionTypes } from '@src/action-types';
 import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
 import dayjs from 'dayjs';
 import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
+import Tab = Tabs.Tab;
 
 const { Title, Text } = Typography;
 
@@ -27,9 +28,11 @@ export const App: FunctionComponent = () => {
     lastDate: addDays(new Date(), 14).getTime(),
   });
   const [consent, setConsent] = useState(false);
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     storageService.getConsent().then(setConsent);
+    storageService.getIsSearching().then(setSearching);
   }, []);
 
   const setUserConsent = (val: boolean) => {
@@ -44,7 +47,6 @@ export const App: FunctionComponent = () => {
 
   const initializeMetadata = (metadata: UserMetadata) => {
     const { cities, phone, id, lastDate } = metadata;
-
     setUserMetadata({ cities, phone, id, lastDate });
   };
 
@@ -55,6 +57,7 @@ export const App: FunctionComponent = () => {
       setUserMetadata(newMetadata);
       setDataInCache(newMetadata);
     };
+
   useEffect(() => {
     storageService.getUserMetadata().then((metadata) => {
       if (metadata) {
@@ -68,9 +71,29 @@ export const App: FunctionComponent = () => {
     setMetadata('lastDate')(new Date(dateSelected).getTime());
   };
 
+  const getMyVisitTab = async (): Promise<Tab | null> => {
+    const [tab] = await browser.tabs.query({
+      active: true,
+      currentWindow: true,
+      url: '*://*.myvisit.com/*',
+    });
+    return tab;
+  };
+
   const start = async () => {
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.StartSearch });
+    const maybeMyVisitTab = await getMyVisitTab();
+    if (maybeMyVisitTab) {
+      await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StartSearch });
+      setSearching(true);
+    }
+  };
+
+  const stop = async () => {
+    const maybeMyVisitTab = await getMyVisitTab();
+    if (maybeMyVisitTab) {
+      await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StopSearch });
+      setSearching(false);
+    }
   };
 
   return (
@@ -118,9 +141,13 @@ export const App: FunctionComponent = () => {
         <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>
       <div className={styles.buttonContainer}>
-        <Button onClick={start} disabled={!submitEnabled}>
-          {Content.buttons.search}
-        </Button>
+        {searching ? (
+          <Button onClick={stop}>{Content.buttons.stopSearch}</Button>
+        ) : (
+          <Button onClick={start} disabled={!submitEnabled}>
+            {Content.buttons.search}
+          </Button>
+        )}
       </div>
     </div>
   );

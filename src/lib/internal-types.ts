@@ -1,6 +1,5 @@
 import { ErrorCode } from './constants';
 import { AppointmentSetResult, PrepareVisitData } from './api';
-import { UserMetadata } from '@src/services/storage';
 
 export interface CalendarSlot {
   date: string;
@@ -77,8 +76,6 @@ export interface ResponseFailed {
 }
 
 export type ResponseWrapper<T> = ResponseSuccess<T> | ResponseFailed;
-
-export type InternalSetAppointmentResponse = ResponseWrapper<AppointmentSetResult>;
 
 export type UserVisitResponse = ResponseWrapper<UserVisitSuccessData>;
 

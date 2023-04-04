@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import browser from 'webextension-polyfill';
 import { App } from '@src/components/App';
 import { ConfigProvider } from 'antd';
@@ -14,5 +14,11 @@ export const Popup = () => (
   </ConfigProvider>
 );
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
-  ReactDOM.render(<Popup />, document.getElementById('popup'));
+  const root = createRoot(document.getElementById('popup') as HTMLElement);
+
+  root.render(
+    <React.StrictMode>
+      <Popup />
+    </React.StrictMode>,
+  );
 });

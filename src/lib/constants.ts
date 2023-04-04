@@ -2,7 +2,7 @@ export const OrganizationID = 56;
 export const MockPosition = JSON.stringify({ lat: 36, lng: 15, accuracy: 9999 });
 
 export enum ServiceIds {
-  BiometricPassportAppointment = 156
+  BiometricPassportAppointment = 156,
 }
 
 export enum City {
@@ -59,6 +59,6 @@ export enum ErrorCode {
   IdNotValid = 101,
   PhoneNumberNotValid = 102,
   AlreadyHadAnAppointment = 103,
-  SetAppointmentGeneralError= 104,
+  SetAppointmentGeneralError = 104,
   NoCityFoundForUser = 105,
 }

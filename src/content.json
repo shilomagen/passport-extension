@@ -13,13 +13,13 @@
   "buttons": {
     "search": "חפשו לי תור",
     "login": "התחברו",
-    "loggedIn": "אתם מחוברים!"
+    "loggedIn": "אתם מחוברים!",
+    "stopSearch": "עצור"
   },
   "statuses": {
     "connected": "מחובר",
     "disconnected": "מנותק"
   },
-
   "numOfDays": "מספר הימים",
   "maxDateForAppointment": {
     "title": "תאריך מקסימלי לתור:",
@@ -30,5 +30,9 @@
     "prefix": "בהרצת הבוט, אתם מאשרים את",
     "termsAndConditions": "תנאי השימוש",
     "suffix": "של חברת myVisit"
+  },
+  "results": {
+    "userHasAppointment": "לא ניתן לקבוע תור כי כבר קיים תור פעיל",
+    "scheduledSuccessfully": "התור נקבע בהצלחה"
   }
 }

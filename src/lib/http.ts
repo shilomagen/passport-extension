@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { MockPosition, ServiceIds } from './constants';
+import { ServiceIds } from './constants';
 import {
   AnswerQuestionRequest,
   AppointmentSetRequest,
@@ -20,27 +20,6 @@ import { GetUserInfoResponse } from '@src/lib/api/user-info';
 
 const BaseURL = 'https://central.myvisit.com/CentralAPI';
 
-const delay = (ms = 500) => new Promise((r) => setTimeout(r, ms));
-
-export async function loopWithDelay<T, Response>(
-  array: T[],
-  method: (request: T) => Promise<Response>,
-  delayTime = 500,
-): Promise<Response[]> {
-  const results: Awaited<Response[]> = [];
-  for (let i = 0; i < array.length; i++) {
-    await delay(delayTime);
-    try {
-      const result = await method(array[i]);
-      results.push(result);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  return results;
-}
-
 export const Urls = {
   createAnonymousSession: `${BaseURL}/UserCreateAnonymous`,
   locationSearch: `${BaseURL}/LocationSearch`,
@@ -57,7 +36,7 @@ export const Urls = {
 export class HttpService {
   private readonly httpClient: AxiosInstance;
 
-  constructor() {
+  constructor(onAuthError: () => Promise<void>) {
     this.httpClient = axios.create({
       headers: {
         'application-api-key': '8640a12d-52a7-4c2a-afe1-4411e00e3ac4',
@@ -65,19 +44,16 @@ export class HttpService {
       },
       withCredentials: true,
     });
-    this.httpClient.interceptors.request.use((config) => {
-      (config.params || {})['position'] = MockPosition;
-      return config;
-    });
+    this.addRejectInterceptor(onAuthError);
   }
 
-  public addRejectInterceptor = (func: () => void) => {
+  public addRejectInterceptor = (func: () => Promise<void>) => {
     this.httpClient.interceptors.response.use(
       (res) => res,
-      (error) => {
+      async (error) => {
         const status = error.response.status;
         if (status === 401 || status === 403) {
-          func();
+          await func();
         }
       },
     );

@@ -10,6 +10,7 @@ export interface UserMetadata {
 const USER_METADATA_KEY = 'userMetadata';
 const USER_LOGGED_IN = 'userLoggedIn';
 const USER_CONSENT = 'userConsent';
+const USER_SEARCHING = 'userSearching';
 
 const HOUR = 1000 * 60 * 60;
 
@@ -54,5 +55,13 @@ export class StorageService {
 
   setConsent(consent: boolean): Promise<void> {
     return browser.storage.local.set({ [USER_CONSENT]: consent });
+  }
+
+  setIsSearching(isSearching: boolean): Promise<void> {
+    return browser.storage.local.set({ [USER_SEARCHING]: isSearching });
+  }
+
+  getIsSearching(): Promise<boolean> {
+    return browser.storage.local.get(USER_SEARCHING).then((res) => res[USER_SEARCHING] ?? false);
   }
 }

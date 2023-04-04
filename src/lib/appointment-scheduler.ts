@@ -13,7 +13,7 @@ enum ErrorStrings {
   DoubleBook = 'לא ניתן לתאם תור חדש לפני ביטול התור הקיים',
 }
 
-export class AppointmentHandler {
+export class AppointmentScheduler {
   constructor(private readonly httpService: HttpService) {}
 
   private static resolveError(response: AppointmentSetResponse): ErrorCode {
@@ -30,7 +30,7 @@ export class AppointmentHandler {
     return ErrorCode.General;
   }
 
-  async setAppointment(userVisit: UserVisitSuccessData, slot: EnrichedSlot): Promise<SetAppointmentResponse> {
+  async scheduleAppointment(userVisit: UserVisitSuccessData, slot: EnrichedSlot): Promise<SetAppointmentResponse> {
     const { serviceId, date, timeSinceMidnight } = slot;
     const { visitId, visitToken } = userVisit;
     const setAppointmentRequest: AppointmentSetRequest = {
@@ -44,6 +44,6 @@ export class AppointmentHandler {
     const response = await this.httpService.setAppointment(visitToken, setAppointmentRequest);
     return response?.Success
       ? aSuccessResponse(response.Results!)
-      : aFailedResponse(AppointmentHandler.resolveError(response!));
+      : aFailedResponse(AppointmentScheduler.resolveError(response!));
   }
 }

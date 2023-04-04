@@ -10,7 +10,6 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "rootDir": "./src",
     "outDir": "dist/js",
     "strict": true,
     "sourceMap": true,
