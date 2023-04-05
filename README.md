@@ -1,3 +1,5 @@
+# [Gamkenbot](https://chrome.google.com/webstore/detail/gamkenbot/edgflihadcmpgaicadncdiigconmhhnn) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/shilomagen/passport-extension/blob/main/LICENSE) [![npm version](https://img.shields.io/badge/node-%5E16.9.1-green)](https://www.npmjs.com/package/react) [![build](https://github.com/shilomagen/passport-extension/actions/workflows/test.yml/badge.svg)](https://github.com/shilomagen/passport-extension/actions/workflows/test.yml) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/shilomagen/passport-extension/blob/main/README.md#contributing)
+
 <p align="center">
   <img src="src/assets/gamkenbot.png" />
 </p>
