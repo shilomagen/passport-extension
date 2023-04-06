@@ -16,7 +16,7 @@ import Tab = Tabs.Tab;
 
 const { Title, Text } = Typography;
 
-const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).map((value) => ({ value }));
+const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).sort().map((value) => ({ value }));
 
 const storageService = new StorageService();
 
