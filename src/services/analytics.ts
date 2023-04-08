@@ -15,12 +15,13 @@ export interface AnalyticsEvent {
 }
 
 export class Analytics {
-  constructor(private readonly storage: StorageService) {
+  constructor(private readonly storage: StorageService = new StorageService()) {
     mixpanel.init(MIXPANEL_PUBLIC_TOKEN);
   }
 
-  async report(event: AnalyticsEvent): Promise<void> {
+  report = async (event: AnalyticsEvent): Promise<boolean> => {
     mixpanel.identify(await this.storage.getUserId());
     mixpanel.track(event.type, event.payload ? event.payload : {});
-  }
+    return true;
+  };
 }

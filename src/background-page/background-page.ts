@@ -1,12 +1,10 @@
 import browser from 'webextension-polyfill';
 import { StorageService } from '@src/services/storage';
-import { ActionTypes } from '@src/action-types';
-import { Analytics } from '@src/services/analytics';
+import { ActionTypes, PlatformMessage } from '@src/platform-message';
 
 const storageService = new StorageService();
 
 const VALID_COOKIES_NAMES = ['CentralJwtAnonymous', 'CentralJWTCookie'];
-const analytics = new Analytics(storageService);
 
 browser.webNavigation.onCompleted.addListener(
   async () => {
@@ -16,13 +14,7 @@ browser.webNavigation.onCompleted.addListener(
       }
     });
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.IsLoggedIn });
+    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.IsLoggedIn } as PlatformMessage);
   },
   { url: [{ hostSuffix: '.myvisit.com' }] },
 );
-
-browser.runtime.onMessage.addListener(async (message) => {
-  if (message.action === ActionTypes.ReportAnalytics) {
-    await analytics.report(message.payload);
-  }
-});

@@ -1,22 +1,17 @@
 import browser from 'webextension-polyfill';
-import { ActionTypes } from '@src/action-types';
+import { ActionTypes, PlatformMessage } from '@src/platform-message';
 import { Gamkenbot } from '@src/content-script/gamkenbot';
+import { Analytics } from '@src/services/analytics';
+import { match } from 'ts-pattern';
 
 const gamkenbot = new Gamkenbot();
+const analytics = new Analytics();
 
-const handlers: Record<ActionTypes, () => Promise<boolean>> = {
-  [ActionTypes.StartSearch]: () => gamkenbot.startSearching(),
-  [ActionTypes.StopSearch]: () => gamkenbot.stopSearching(),
-  [ActionTypes.IsLoggedIn]: () => gamkenbot.setLoggedIn(),
-  [ActionTypes.ReportAnalytics]: () => Promise.resolve(true),
-};
-
-browser.runtime.onMessage.addListener((message) => {
-  const handler = handlers[message.action as ActionTypes];
-  if (handler) {
-    return handler();
-  } else {
-    console.error('Could not find method with type', message.type);
-    return Promise.resolve(false);
-  }
+browser.runtime.onMessage.addListener((message: PlatformMessage) => {
+  match(message)
+    .with({ action: ActionTypes.ReportAnalytics }, ({ payload }) => analytics.report(payload))
+    .with({ action: ActionTypes.IsLoggedIn }, gamkenbot.setLoggedIn)
+    .with({ action: ActionTypes.StartSearch }, gamkenbot.startSearching)
+    .with({ action: ActionTypes.StopSearch }, gamkenbot.stopSearching)
+    .exhaustive();
 });
