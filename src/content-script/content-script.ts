@@ -8,6 +8,7 @@ const handlers: Record<ActionTypes, () => Promise<boolean>> = {
   [ActionTypes.StartSearch]: () => gamkenbot.startSearching(),
   [ActionTypes.StopSearch]: () => gamkenbot.stopSearching(),
   [ActionTypes.IsLoggedIn]: () => gamkenbot.setLoggedIn(),
+  [ActionTypes.ReportAnalytics]: () => Promise.resolve(true),
 };
 
 browser.runtime.onMessage.addListener((message) => {

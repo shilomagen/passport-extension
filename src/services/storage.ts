@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill';
+import { v4 as uuid } from 'uuid';
 
 export interface UserMetadata {
   id: string;
@@ -11,6 +12,7 @@ const USER_METADATA_KEY = 'userMetadata';
 const USER_LOGGED_IN = 'userLoggedIn';
 const USER_CONSENT = 'userConsent';
 const USER_SEARCHING = 'userSearching';
+const USER_ID = 'userId';
 
 const HOUR = 1000 * 60 * 60;
 
@@ -63,5 +65,20 @@ export class StorageService {
 
   getIsSearching(): Promise<boolean> {
     return browser.storage.local.get(USER_SEARCHING).then((res) => res[USER_SEARCHING] ?? false);
+  }
+
+  async getUserId(): Promise<string> {
+    const maybeUserId = await browser.storage.local.get(USER_ID).then((res) => res[USER_ID]);
+    if (maybeUserId) {
+      return maybeUserId || '';
+    } else {
+      const userId = uuid();
+      await this.setUserId(userId);
+      return userId;
+    }
+  }
+
+  setUserId(id: string): Promise<void> {
+    return browser.storage.local.set({ [USER_ID]: id });
   }
 }

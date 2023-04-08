@@ -1,10 +1,12 @@
 import browser from 'webextension-polyfill';
 import { StorageService } from '@src/services/storage';
 import { ActionTypes } from '@src/action-types';
+import { Analytics } from '@src/services/analytics';
 
 const storageService = new StorageService();
 
 const VALID_COOKIES_NAMES = ['CentralJwtAnonymous', 'CentralJWTCookie'];
+const analytics = new Analytics(storageService);
 
 browser.webNavigation.onCompleted.addListener(
   async () => {
@@ -18,3 +20,9 @@ browser.webNavigation.onCompleted.addListener(
   },
   { url: [{ hostSuffix: '.myvisit.com' }] },
 );
+
+browser.runtime.onMessage.addListener(async (message) => {
+  if (message.action === ActionTypes.ReportAnalytics) {
+    await analytics.report(message.payload);
+  }
+});

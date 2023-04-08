@@ -3,6 +3,11 @@
 // This is used to mock these values for Storybook so you can develop your components
 // outside the Web Extension environment provided by a compatible browser
 // See .storybook/main.js to see how this module is swapped in for `webextension-polyfill`
+import { MessagingTestkit } from '../../test/testkits/messaging.testkit';
+import { LocalStorageTestkit } from '../../test/testkits/storage.testkit';
+
+const messagingTestkit = new MessagingTestkit();
+
 const browser: any = {
   tabs: {
     executeScript(currentTabId: number, details: any) {
@@ -13,16 +18,20 @@ const browser: any = {
     },
   },
   runtime: {
-    sendMessage: (params: { popupMounted: boolean }) => {
-      return;
+    sendMessage: messagingTestkit.sendMessage,
+    onMessage: {
+      addListener: messagingTestkit.addListener,
     },
   },
   storage: {
     onChanged: {
       addListener: jest.fn(),
     },
-    local: {
-      get: jest.fn().mockResolvedValue({}),
+    local: new LocalStorageTestkit(),
+  },
+  webNavigation: {
+    onCompleted: {
+      addListener: () => null,
     },
   },
 };
