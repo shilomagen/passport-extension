@@ -5,15 +5,13 @@ import Content from '@src/content.json';
 import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
 import debounce from 'lodash.debounce';
-import browser, { Tabs } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import { ActionTypes, ReportAnalyticsMessage } from '@src/platform-message';
 import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
 import dayjs from 'dayjs';
 import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
-import { AnalyticsEventType } from '@src/services/analytics';
-import Tab = Tabs.Tab;
 
 const { Title, Text } = Typography;
 
@@ -27,13 +25,12 @@ export const App: FunctionComponent = () => {
     cities: [],
     id: '',
     lastDate: addDays(new Date(), 14).getTime(),
+    firstDate: addDays(new Date(), 1).getTime(),
   });
   const [consent, setConsent] = useState(false);
-  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     storageService.getConsent().then(setConsent);
-    storageService.getIsSearching().then(setSearching);
   }, []);
 
   const setUserConsent = (val: boolean) => {
@@ -41,14 +38,15 @@ export const App: FunctionComponent = () => {
     void storageService.setConsent(val);
   };
 
-  const { id, phone, cities, lastDate } = userMetadata;
+  const { id, phone, cities, lastDate, firstDate } = userMetadata;
 
   const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id, lastDate } = metadata;
-    setUserMetadata({ cities, phone, id, lastDate });
+    const { cities, phone, id, lastDate, firstDate } = metadata;
+
+    setUserMetadata({ cities, phone, id, lastDate, firstDate });
   };
 
   const setMetadata =
@@ -58,7 +56,6 @@ export const App: FunctionComponent = () => {
       setUserMetadata(newMetadata);
       setDataInCache(newMetadata);
     };
-
   useEffect(() => {
     storageService.getUserMetadata().then((metadata) => {
       if (metadata) {
@@ -72,33 +69,9 @@ export const App: FunctionComponent = () => {
     setMetadata('lastDate')(new Date(dateSelected).getTime());
   };
 
-  const getMyVisitTab = async (): Promise<Tab | null> => {
-    const [tab] = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-      url: '*://*.myvisit.com/*',
-    });
-    return tab;
-  };
-
   const start = async () => {
-    const maybeMyVisitTab = await getMyVisitTab();
-    if (maybeMyVisitTab) {
-      await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StartSearch });
-      await browser.tabs.sendMessage(maybeMyVisitTab.id!, {
-        action: ActionTypes.ReportAnalytics,
-        payload: { type: AnalyticsEventType.StartSearch },
-      } as ReportAnalyticsMessage);
-      setSearching(true);
-    }
-  };
-
-  const stop = async () => {
-    const maybeMyVisitTab = await getMyVisitTab();
-    if (maybeMyVisitTab) {
-      await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StopSearch });
-      setSearching(false);
-    }
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.StartSearch });
   };
 
   return (
@@ -135,24 +108,31 @@ export const App: FunctionComponent = () => {
         listHeight={200}
         className={styles.selectContainer}
       />
-      <Text>{Content.maxDateForAppointment.title}</Text>
-      <DatePicker
-        placeholder={Content.maxDateForAppointment.placeholder}
-        className={styles.datePickerContainer}
-        value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
-        onChange={(_, dateString) => onDateChange(dateString)}
-      />
+      <div>
+        <Text>{Content.minDateForAppointment.title} </Text>
+        <DatePicker
+          placeholder={Content.minDateForAppointment.placeholder}
+          className={styles.datePickerContainer}
+          value={userMetadata.firstDate ? dayjs(userMetadata.firstDate) : null}
+          onChange={(_, dateString) => onDateChange(dateString)}
+        />
+      </div>
+      <div>
+        <Text>{Content.maxDateForAppointment.title} </Text>
+        <DatePicker
+          placeholder={Content.maxDateForAppointment.placeholder}
+          className={styles.datePickerContainer}
+          value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
+          onChange={(_, dateString) => onDateChange(dateString)}
+        />
+      </div>
       <div className={styles.consentContainer}>
         <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>
       <div className={styles.buttonContainer}>
-        {searching ? (
-          <Button onClick={stop}>{Content.buttons.stopSearch}</Button>
-        ) : (
-          <Button onClick={start} disabled={!submitEnabled}>
-            {Content.buttons.search}
-          </Button>
-        )}
+        <Button onClick={start} disabled={!submitEnabled}>
+          {Content.buttons.search}
+        </Button>
       </div>
     </div>
   );
