@@ -40,7 +40,7 @@ export const App: FunctionComponent = () => {
 
   const { id, phone, cities, lastDate, firstDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
+  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0 && firstDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
@@ -67,6 +67,11 @@ export const App: FunctionComponent = () => {
   const onDateChange = (dateString: string) => {
     const dateSelected = new Date(dateString);
     setMetadata('lastDate')(new Date(dateSelected).getTime());
+  };
+
+  const onStartDateChange = (dateString: string) => {
+    const dateSelected = new Date(dateString);
+    setMetadata('firstDate')(new Date(dateSelected).getTime());
   };
 
   const start = async () => {
@@ -114,7 +119,7 @@ export const App: FunctionComponent = () => {
           placeholder={Content.minDateForAppointment.placeholder}
           className={styles.datePickerContainer}
           value={userMetadata.firstDate ? dayjs(userMetadata.firstDate) : null}
-          onChange={(_, dateString) => onDateChange(dateString)}
+          onChange={(_, dateString) => onStartDateChange(dateString)}
         />
       </div>
       <div>
