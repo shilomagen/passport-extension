@@ -19,4 +19,8 @@ export class PriorityQueue {
   dequeue(): Task {
     return this.queue.dequeue();
   }
+
+  toArray(): Task[] {
+    return this.queue.toArray();
+  }
 }

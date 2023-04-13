@@ -55,6 +55,7 @@ module.exports = {
   moduleNameMapper: {
     '@src/(.*)': '<rootDir>/src/$1',
     '\\.(css|less|scss|sss|styl)$': '<rootDir>/node_modules/jest-css-modules',
+    '@test/(.*)': '<rootDir>/test/$1',
   },
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -91,7 +92,9 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: 'jest-environment-jsdom',
   // Options that will be passed to the testEnvironment
-  // testEnvironmentOptions: {},
+  testEnvironmentOptions: {
+    url: 'https://central.myvisit.com',
+  },
   // Adds a location field to test results
   // testLocationInResults: false,
   // The glob patterns Jest uses to detect test files
@@ -108,7 +111,7 @@ module.exports = {
   // This option allows use of a custom test runner
   // testRunner: "jasmine2",
   // This option sets the URL for the jsdom environment. It is reflected in properties such as location.href
-  // testURL: "http://localhost",
+  // testURL: 'https://central.myvisit.com',
   // Setting this value to "fake" allows the use of fake timers for functions such as "setTimeout"
   // timers: "real",
   // A map from regular expressions to paths to transformers

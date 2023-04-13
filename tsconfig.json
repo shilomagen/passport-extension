@@ -4,7 +4,10 @@
     "paths": {
       "@src/*": [
         "src/*"
-      ]
+      ],
+      "@test/*": [
+        "test/*"
+      ],
     },
     "target": "es5",
     "module": "commonjs",

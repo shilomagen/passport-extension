@@ -6,8 +6,8 @@ export interface SearchAvailableSlotsRequest {
   dayPart: number;
 }
 
-interface SearchAvailableSlotsResult {
+export interface SearchAvailableSlotsResult {
   Time: number; // minutes since midnight
 }
 
-export type SearchAvailableSlotsResponse = CommonResultsResponse<SearchAvailableSlotsResult[]>
+export type SearchAvailableSlotsResponse = CommonResultsResponse<SearchAvailableSlotsResult[]>;

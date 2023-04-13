@@ -18,19 +18,31 @@ import { EnrichedService, Service } from './internal-types';
 import { toService } from './mappers';
 import { GetUserInfoResponse } from '@src/lib/api/user-info';
 
-const BaseURL = 'https://central.myvisit.com/CentralAPI';
+export const BaseURL = 'https://central.myvisit.com/CentralAPI';
+export const PartialURLs = {
+  createAnonymousSession: 'UserCreateAnonymous',
+  locationSearch: 'LocationSearch',
+  locationServices: 'LocationGetServices',
+  searchAvailableDates: 'SearchAvailableDates',
+  searchAvailableSlots: 'SearchAvailableSlots',
+  setAppointment: 'AppointmentSet',
+  cancelAppointment: 'AppointmentCancel',
+  prepareVisit: 'Organization/56/PrepareVisit',
+  getUserInfo: 'UserGetInfo',
+  answer: (visitToken: string) => `PreparedVisit/${visitToken}/Answer`,
+};
 
 export const Urls = {
-  createAnonymousSession: `${BaseURL}/UserCreateAnonymous`,
-  locationSearch: `${BaseURL}/LocationSearch`,
-  locationServices: `${BaseURL}/LocationGetServices`,
-  searchAvailableDates: `${BaseURL}/SearchAvailableDates`,
-  searchAvailableSlots: `${BaseURL}/SearchAvailableSlots`,
-  setAppointment: `${BaseURL}/AppointmentSet`,
-  cancelAppointment: `${BaseURL}/AppointmentCancel`,
-  prepareVisit: `${BaseURL}/Organization/56/PrepareVisit`,
-  getUserInfo: `${BaseURL}/UserGetInfo`,
-  answer: (visitToken: string) => `${BaseURL}/PreparedVisit/${visitToken}/Answer`,
+  createAnonymousSession: `${BaseURL}/${PartialURLs.createAnonymousSession}`,
+  locationSearch: `${BaseURL}/${PartialURLs.locationSearch}`,
+  locationServices: `${BaseURL}/${PartialURLs.locationServices}`,
+  searchAvailableDates: `${BaseURL}/${PartialURLs.searchAvailableDates}`,
+  searchAvailableSlots: `${BaseURL}/${PartialURLs.searchAvailableSlots}`,
+  setAppointment: `${BaseURL}/${PartialURLs.setAppointment}`,
+  cancelAppointment: `${BaseURL}/${PartialURLs.cancelAppointment}`,
+  prepareVisit: `${BaseURL}/${PartialURLs.prepareVisit}`,
+  getUserInfo: `${BaseURL}/${PartialURLs.getUserInfo}`,
+  answer: (visitToken: string) => `${BaseURL}/${PartialURLs.answer(visitToken)}`,
 };
 
 export class HttpService {
@@ -39,6 +51,7 @@ export class HttpService {
   constructor(onAuthError: () => Promise<void>) {
     this.httpClient = axios.create({
       headers: {
+        // MyVisit default configuration
         'application-api-key': '8640a12d-52a7-4c2a-afe1-4411e00e3ac4',
         'application-name': 'myVisit.com v3.5',
       },
@@ -51,7 +64,7 @@ export class HttpService {
     this.httpClient.interceptors.response.use(
       (res) => res,
       async (error) => {
-        const status = error.response.status;
+        const status = error?.response?.status;
         if (status === 401 || status === 403) {
           await func();
         }
@@ -93,7 +106,7 @@ export class HttpService {
     };
     return this.httpClient
       .get<SearchAvailableSlotsResponse>(Urls.searchAvailableSlots, { params })
-      .then((res) => (res.data.Results ?? []).map(({ Time }) => Time));
+      .then((res) => (res?.data?.Results ?? []).map(({ Time }) => Time));
   }
 
   public prepareVisit(): Promise<PrepareVisitData> {
