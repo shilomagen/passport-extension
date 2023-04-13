@@ -1,4 +1,4 @@
-import { BaseHandler } from '@src/content-script/handlers/index';
+import { BaseHandler } from '@src/content-script/handlers';
 import { GetCalendarSlotTask, Priority, TaskType } from '@src/content-script/task';
 import { toCalendarSlot, toEnrichedSlot } from '@src/lib/mappers';
 

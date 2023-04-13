@@ -2,7 +2,7 @@ import { HttpService } from '@src/lib/http';
 import { Location, UserVisitSuccessData } from '@src/lib/internal-types';
 import { Handler as GetServiceByLocationHandler } from '@src/content-script/handlers/get-service-by-location';
 import { Handler as GetServiceCalendarHandler } from '@src/content-script/handlers/get-service-calendar';
-import { Handler as GetSlotForCalendarHandler } from '@src/content-script/handlers/get-slot-for-calendar';
+import { Handler as GetSlotForCalendarHandler } from '@src/content-script/handlers/get-slot-for-calendar/get-slot-for-calendar';
 import { Handler as Scheduler } from '@src/content-script/handlers/scheduler';
 import { match } from 'ts-pattern';
 import { PriorityQueue } from '@src/content-script/priority-queue';
@@ -16,7 +16,7 @@ import {
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 
-const WORKER_INTERVAL = 500;
+const WORKER_INTERVAL = 600;
 
 export interface WorkerConfig {
   locations: Location[];
