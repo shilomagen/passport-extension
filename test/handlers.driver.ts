@@ -10,27 +10,24 @@ import { ServiceIds } from '@src/lib/constants';
 import { StorageService } from '@src/services/storage';
 import browser from 'webextension-polyfill';
 import { LocalStorageTestkit } from '@test/testkits/storage.testkit';
+import { Analytics } from '@src/services/analytics';
+import { BaseParams } from '@src/content-script/handlers';
+import { MixpanelTestkit } from './testkits/mixpanel.testkit';
+import Mixpanel from 'mixpanel-browser';
 
+const mixpanelTestkit: jest.Mocked<MixpanelTestkit> = Mixpanel as any;
 const storageTestkit = browser.storage.local as unknown as LocalStorageTestkit;
 
 export class HandlersDriver {
-  private queue: PriorityQueue = new PriorityQueue();
-  private httpService: HttpService = new HttpService(() => Promise.resolve());
-  private storageService = new StorageService();
+  private baseParams: BaseParams = {
+    priorityQueue: new PriorityQueue(),
+    httpService: new HttpService(() => Promise.resolve()),
+    storage: new StorageService(),
+    analytics: new Analytics(),
+  };
 
-  private getSlotForCalendarHandler = new GetSlotForCalendar({
-    httpService: this.httpService,
-    priorityQueue: this.queue,
-    storage: this.storageService,
-  });
-  private getServiceByLocationHandler = new GetServiceByLocation(
-    {
-      httpService: this.httpService,
-      priorityQueue: this.queue,
-      storage: this.storageService,
-    },
-    Locations,
-  );
+  private getSlotForCalendarHandler = new GetSlotForCalendar(this.baseParams);
+  private getServiceByLocationHandler = new GetServiceByLocation(this.baseParams, Locations);
 
   given = {
     storageValue: (val: Record<string, any>) => storageTestkit.set(val),
@@ -67,13 +64,15 @@ export class HandlersDriver {
   };
 
   get = {
-    queueTasks: () => this.queue.toArray(),
+    queueTasks: () => this.baseParams.priorityQueue.toArray(),
     storageValue: (key: string) => storageTestkit.get(key),
+    analyticsReports: () => mixpanelTestkit.getReports(),
   };
 
   reset = () => {
     nock.cleanAll();
     storageTestkit.clear();
-    this.queue.clear();
+    this.baseParams.priorityQueue.clear();
+    mixpanelTestkit.reset();
   };
 }

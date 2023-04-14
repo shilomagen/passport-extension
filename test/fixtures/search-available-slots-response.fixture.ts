@@ -4,7 +4,7 @@ import { SearchAvailableSlotsResponse, SearchAvailableSlotsResult } from '@src/l
 const defaultResponse = (): SearchAvailableSlotsResponse => {
   return {
     Success: true,
-    Results: [{ Time: 528 }, { Time: 552 }],
+    Results: [{ Time: 528 }],
     Page: 0,
     ResultsPerPage: 0,
     TotalResults: 18,

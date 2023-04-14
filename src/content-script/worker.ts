@@ -15,6 +15,7 @@ import {
 } from '@src/content-script/task';
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
+import { Analytics } from '@src/services/analytics';
 
 const WORKER_INTERVAL = 1000;
 
@@ -96,6 +97,7 @@ export class Worker {
     const params: BaseParams = {
       priorityQueue: this.priorityQueue,
       storage: this.storageService,
+      analytics: new Analytics(),
       httpService,
     };
     return match(task)

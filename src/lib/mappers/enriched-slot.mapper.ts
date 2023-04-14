@@ -9,6 +9,5 @@ export function toEnrichedSlot(calendarSlot: CalendarSlot, location: Location): 
     address: location.address,
     branchName: location.name,
     city: location.city,
-    mappedCity: City[location.city as any],
   };
 }
