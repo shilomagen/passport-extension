@@ -1,6 +1,6 @@
 import { HttpService } from '@src/lib/http';
 import { Location, UserVisitSuccessData } from '@src/lib/internal-types';
-import { Handler as GetServiceByLocationHandler } from '@src/content-script/handlers/get-service-by-location';
+import { Handler as GetServiceByLocationHandler } from '@src/content-script/handlers/get-service-by-location/get-service-by-location';
 import { Handler as GetServiceCalendarHandler } from '@src/content-script/handlers/get-service-calendar';
 import { Handler as GetSlotForCalendarHandler } from '@src/content-script/handlers/get-slot-for-calendar/get-slot-for-calendar';
 import { Handler as Scheduler } from '@src/content-script/handlers/scheduler';
@@ -16,7 +16,7 @@ import {
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 
-const WORKER_INTERVAL = 600;
+const WORKER_INTERVAL = 1000;
 
 export interface WorkerConfig {
   locations: Location[];
@@ -95,6 +95,7 @@ export class Worker {
     const { locations, maxDaysUntilAppointment, userVisit, httpService } = config;
     const params: BaseParams = {
       priorityQueue: this.priorityQueue,
+      storage: this.storageService,
       httpService,
     };
     return match(task)

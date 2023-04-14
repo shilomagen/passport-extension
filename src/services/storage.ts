@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import { v4 as uuid } from 'uuid';
+import { Service } from '@src/lib/internal-types';
 
 export interface UserMetadata {
   id: string;
@@ -14,7 +15,10 @@ const USER_CONSENT = 'userConsent';
 const USER_SEARCHING = 'userSearching';
 const USER_ID = 'userId';
 
-const HOUR = 1000 * 60 * 60;
+export const LOCATION_PREFIX = 'location_';
+
+export const HOUR = 1000 * 60 * 60;
+export const DAY = HOUR * 24;
 
 export class StorageService {
   setUserMetadata(metadata: UserMetadata): Promise<void> {
@@ -34,13 +38,14 @@ export class StorageService {
     });
   }
 
-  getLoggedIn(): Promise<boolean> {
-    return browser.storage.local.get(USER_LOGGED_IN).then((res) => {
-      if (res[USER_LOGGED_IN]) {
-        const { loggedIn, expiry } = res[USER_LOGGED_IN];
-        return expiry > Date.now() ? loggedIn : browser.storage.local.remove(USER_LOGGED_IN).then(() => false);
-      }
-    });
+  async getLoggedIn(): Promise<boolean> {
+    const maybeLoggedIn = await browser.storage.local.get(USER_LOGGED_IN);
+    if (maybeLoggedIn[USER_LOGGED_IN]) {
+      const { loggedIn, expiry } = maybeLoggedIn[USER_LOGGED_IN];
+      return expiry > Date.now() ? loggedIn : browser.storage.local.remove(USER_LOGGED_IN).then(() => false);
+    } else {
+      return false;
+    }
   }
 
   onLoggedInChange(callback: (loggedIn: boolean) => void): void {
@@ -80,5 +85,27 @@ export class StorageService {
 
   setUserId(id: string): Promise<void> {
     return browser.storage.local.set({ [USER_ID]: id });
+  }
+
+  async getServiceIdByLocationId(locationId: number): Promise<Service[] | null> {
+    const servicesKey = LOCATION_PREFIX + locationId;
+    const maybeServices = await browser.storage.local.get(servicesKey);
+    if (maybeServices[servicesKey]) {
+      const { expiry, services } = maybeServices[LOCATION_PREFIX + locationId];
+      return expiry > Date.now()
+        ? services
+        : browser.storage.local.remove(LOCATION_PREFIX + locationId).then(() => null);
+    } else {
+      return null;
+    }
+  }
+
+  setServiceIdByLocationId(locationId: number, services: Service[]): Promise<void> {
+    return browser.storage.local.set({
+      [LOCATION_PREFIX + locationId]: {
+        expiry: Date.now() + DAY * 3,
+        services,
+      },
+    });
   }
 }

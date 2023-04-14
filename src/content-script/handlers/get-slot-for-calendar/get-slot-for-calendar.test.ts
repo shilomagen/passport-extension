@@ -10,6 +10,8 @@ describe('[GetSlotForCalendar Handler]', () => {
   const serviceId = 2654;
   const calendarDate = '2023-05-01';
 
+  beforeEach(driver.reset);
+
   test('should enqueue slots in priority queue with priority high', async () => {
     const slot = { Time: 528 };
     const response = SearchAvailableSlotsResponseFixtures.valid({ Results: [slot] });
