@@ -126,6 +126,7 @@ export const App: FunctionComponent = () => {
         placeholder={Content.phone.placeholder}
         onChange={(e) => setMetadata('phone')(e.target.value)}
       />
+      <Text>{Content.maxCitiesText}</Text>
       <Select
         options={ALL_CITIES}
         value={userMetadata.cities}

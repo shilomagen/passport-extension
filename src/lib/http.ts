@@ -54,6 +54,7 @@ export class HttpService {
         // MyVisit default configuration
         'application-api-key': '8640a12d-52a7-4c2a-afe1-4411e00e3ac4',
         'application-name': 'myVisit.com v3.5',
+        'accept-language': 'en',
       },
       withCredentials: true,
     });

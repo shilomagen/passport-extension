@@ -17,7 +17,7 @@ import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 import { Analytics } from '@src/services/analytics';
 
-const WORKER_INTERVAL = 1000;
+const WORKER_INTERVAL = 500;
 
 export interface WorkerConfig {
   locations: Location[];
