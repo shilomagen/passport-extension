@@ -60,6 +60,10 @@ export class HttpService {
     this.addRejectInterceptor(onAuthError);
   }
 
+  public updateVisitToken = (visitToken: string) => {
+    this.httpClient.defaults.headers['Preparedvisittoken'] = visitToken;
+  };
+
   public addRejectInterceptor = (func: () => Promise<void>) => {
     this.httpClient.interceptors.response.use(
       (res) => res,

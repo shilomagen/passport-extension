@@ -42,7 +42,6 @@ export class Worker {
         params: { locationId: location.id },
         priority: Priority.Low,
       };
-      console.log('Adding task to queue');
       this.priorityQueue.enqueue(task);
     });
   }
@@ -50,10 +49,8 @@ export class Worker {
   tick = (config: WorkerConfig): void => {
     if (!this.priorityQueue.isEmpty()) {
       const task = this.priorityQueue.dequeue();
-      console.log('Dequeue task', task);
       this.handle(task, config).catch((err) => console.error(err));
     } else {
-      console.log('Priority queue is empty, Filling Queue');
       this.fillQueue(config.locations);
     }
   };
@@ -64,7 +61,6 @@ export class Worker {
   };
 
   stop = async (): Promise<void> => {
-    console.log('Stopping worker, clearing the queue');
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;

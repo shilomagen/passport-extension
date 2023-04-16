@@ -8,7 +8,6 @@ export class Handler extends BaseHandler<GetServiceCalendarTask> {
   }
 
   async handle(task: GetServiceCalendarTask): Promise<void> {
-    console.log('GetServiceCalendarTask');
     const { httpService, priorityQueue } = this.params;
     const { serviceId, location } = task.params;
     const calendars = await httpService.getCalendars(serviceId);

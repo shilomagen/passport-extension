@@ -6,7 +6,6 @@ import { EnrichedSlot } from '@src/lib/internal-types';
 
 export class Handler extends BaseHandler<GetCalendarSlotTask> {
   async handle(task: GetCalendarSlotTask): Promise<void> {
-    console.log('GetCalendarSlotTask');
     const { httpService, priorityQueue } = this.params;
     const { enrichedService, location } = task.params;
     const { calendarId, serviceId } = enrichedService;

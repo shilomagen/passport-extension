@@ -39,7 +39,6 @@ export class Handler extends BaseHandler<GetServiceIdByLocationIdTask> {
   }
 
   async handle(task: GetServiceIdByLocationIdTask): Promise<void> {
-    console.log('GetServiceIdByLocationIdTask');
     const { locationId } = task.params;
     const services = await this.getServices(locationId);
     const serviceIdLocationsMap = this.createServiceToLocationMap(services);

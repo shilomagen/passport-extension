@@ -15,7 +15,6 @@ export class Handler extends BaseHandler<ScheduleAppointmentTask, ScheduleHandle
   }
 
   async handle(task: ScheduleAppointmentTask): Promise<ScheduleHandleResponse> {
-    console.log('ScheduleAppointmentTask');
     const { httpService } = this.params;
     const appointmentScheduler = new AppointmentScheduler(httpService);
     const res = await appointmentScheduler.scheduleAppointment(this.userVisit, task.params.slot);

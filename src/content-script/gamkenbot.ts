@@ -32,7 +32,6 @@ export class Gamkenbot {
     const visitService = new VisitService(this.httpService);
 
     if (!info) {
-      console.log('Data was not initialized yet');
       return false;
     }
 
@@ -40,6 +39,7 @@ export class Gamkenbot {
     const preparedVisit = await visitService.prepare(info);
 
     if (preparedVisit.status === ResponseStatus.Success) {
+      this.httpService.updateVisitToken(preparedVisit.data.visitToken);
       const locations = Locations.filter((location) => info.cities.includes(location.city));
       const config: WorkerConfig = {
         locations,
