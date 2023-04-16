@@ -9,10 +9,11 @@ export class Handler extends BaseHandler<GetServiceIdByLocationIdTask> {
 
   private createServiceToLocationMap(services: Service[]): Record<string, Location> {
     return services.reduce<Record<string, Location>>((acc, service) => {
-      return {
-        ...acc,
-        [service.id]: this.locations.find((location) => location.id === service.locationId)!,
-      };
+      const location = this.locations.find((location) => location.id === service.locationId);
+      if (location) {
+        acc[service.id] = location;
+      }
+      return acc;
     }, {});
   }
 
