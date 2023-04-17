@@ -6,6 +6,6 @@ export function toService(result: LocationServicesResult): Service {
     id: result.serviceId,
     description: result.description,
     name: result.serviceName,
-    locationId: result.LocationId
-  }
+    locationId: result.LocationId,
+  };
 }

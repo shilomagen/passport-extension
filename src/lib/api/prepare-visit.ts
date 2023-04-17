@@ -1,7 +1,6 @@
 import { CommonDataResponse } from './common';
 
-export interface PrepareVisitRequest {
-}
+export interface PrepareVisitRequest {}
 
 export interface AnswerQuestionRequest {
   PreparedVisitToken: string;
@@ -27,7 +26,6 @@ export interface NavigationState {
   ServiceId: number;
   QflowServiceId: number;
 }
-
 
 export interface Question {
   AskOncePerCustomer: boolean;
@@ -72,7 +70,6 @@ export interface NavigationState {
   QflowServiceId: number;
 }
 
-
 export interface PrepareVisitData {
   PreparedVisitId: number;
   UserId: number;
@@ -87,5 +84,4 @@ export interface PrepareVisitData {
   IsUserIdentify?: any;
 }
 
-export type PrepareVisitResponse = CommonDataResponse<PrepareVisitData>
-
+export type PrepareVisitResponse = CommonDataResponse<PrepareVisitData>;
