@@ -21,6 +21,30 @@ const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city)
 
 const storageService = new StorageService();
 
+export const validateIsraeliIdNumber = (id: any): boolean => {
+  if (!id) {
+    return false;
+  }
+  id = String(id).trim();
+  if (id.length !== 9 || isNaN(Number(id))) return false;
+  return Array.from(id, Number).reduce((counter: number, digit: number, i: number) => {
+    const step = digit * ((i % 2) + 1);
+    return counter + (step > 9 ? step - 9 : step);
+  }, 0) % 10 === 0;
+};
+
+export const validatePhoneNumber = (inputString: string): boolean => {
+  const regex = /^05\d{8}$/;
+  return regex.test(inputString);
+};
+
+export const validateNumberOfAllowedCities = (cities: string[] | null | undefined): boolean => {
+  if (!cities || cities.length === 0) {
+    return true;
+  }
+  return cities.length > 4;
+};
+
 export const App: FunctionComponent = () => {
   const [userMetadata, setUserMetadata] = useState<UserMetadata>({
     phone: '',
@@ -43,7 +67,13 @@ export const App: FunctionComponent = () => {
 
   const { id, phone, cities, lastDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
+  const submitEnabled = (
+    validateIsraeliIdNumber(id) &&
+    validatePhoneNumber(phone) &&
+    cities.length > 0 &&
+    cities.length <= 4 &&
+    consent && lastDate > 0
+  );
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
@@ -116,6 +146,7 @@ export const App: FunctionComponent = () => {
         name="id"
         value={userMetadata.id}
         placeholder={Content.id.placeholder}
+        status={validateIsraeliIdNumber(userMetadata.id) ? '' : 'error'}
         onChange={(e) => setMetadata('id')(e.target.value)}
       />
       <Input
@@ -124,8 +155,9 @@ export const App: FunctionComponent = () => {
         name="phone"
         value={userMetadata.phone}
         placeholder={Content.phone.placeholder}
+        status={validatePhoneNumber(userMetadata.phone) ? '' : 'error'}
         onChange={(e) => setMetadata('phone')(e.target.value)}
-      />
+        />
       <Text>{Content.maxCitiesText}</Text>
       <Select
         options={ALL_CITIES}
@@ -134,6 +166,7 @@ export const App: FunctionComponent = () => {
         onChange={setMetadata('cities')}
         mode="multiple"
         listHeight={200}
+        status={validateNumberOfAllowedCities(userMetadata.cities) ? 'error' : ''}
         className={styles.selectContainer}
       />
       <Text>{Content.maxDateForAppointment.title}</Text>
