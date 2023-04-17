@@ -18,6 +18,8 @@ import Tab = Tabs.Tab;
 const { Title, Text } = Typography;
 
 const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).map((value) => ({ value }));
+const MAX_CITIES = 4;
+const MAX_CITIES_TEXT = Content.maxCitiesText.replace('{MAX_CITIES}', MAX_CITIES.toString());
 
 const storageService = new StorageService();
 
@@ -70,6 +72,15 @@ export const App: FunctionComponent = () => {
   const onDateChange = (dateString: string) => {
     const dateSelected = new Date(dateString);
     setMetadata('lastDate')(new Date(dateSelected).getTime());
+  };
+
+  const onCitySelection = (selectedOptions: string[]) => {
+    if (selectedOptions && selectedOptions.length <= MAX_CITIES) {
+      console.log(JSON.stringify(selectedOptions));
+      setMetadata('cities')(selectedOptions);
+    } else {
+      alert(MAX_CITIES_TEXT);
+    }
   };
 
   const getMyVisitTab = async (): Promise<Tab | null> => {
@@ -126,12 +137,12 @@ export const App: FunctionComponent = () => {
         placeholder={Content.phone.placeholder}
         onChange={(e) => setMetadata('phone')(e.target.value)}
       />
-      <Text>{Content.maxCitiesText}</Text>
+      <Text>{MAX_CITIES_TEXT}</Text>
       <Select
         options={ALL_CITIES}
         value={userMetadata.cities}
         placeholder={Content.citiesLabel}
-        onChange={setMetadata('cities')}
+        onChange={onCitySelection}
         mode="multiple"
         listHeight={200}
         className={styles.selectContainer}
