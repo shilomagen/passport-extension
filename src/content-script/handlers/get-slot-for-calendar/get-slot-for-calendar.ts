@@ -22,7 +22,7 @@ export class Handler extends BaseHandler<GetCalendarSlotTask> {
         });
         await this.params.analytics.report({
           type: AnalyticsEventType.SlotFound,
-          payload: { city: slot.city, date: slot.date, time: slot.timeSinceMidnight },
+          payload: { city: slot.city, date: slot.date, timeSinceMidnight: slot.timeSinceMidnight },
         });
       });
       await Promise.all(promises);

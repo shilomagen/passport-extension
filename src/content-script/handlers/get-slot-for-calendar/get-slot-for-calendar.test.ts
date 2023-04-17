@@ -41,7 +41,7 @@ describe('[GetSlotForCalendar Handler]', () => {
       data: {
         city: defaultLocation.city,
         date: calendarDate,
-        time: slot.Time,
+        timeSinceMidnight: slot.Time,
       },
       name: AnalyticsEventType.SlotFound,
     });
