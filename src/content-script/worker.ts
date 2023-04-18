@@ -16,8 +16,7 @@ import {
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 import { Analytics } from '@src/services/analytics';
-
-const WORKER_INTERVAL = 800;
+import setRandomInterval, { RandomIntervalClear } from '@src/utils/random-interval';
 
 export interface WorkerConfig {
   locations: Location[];
@@ -27,11 +26,13 @@ export interface WorkerConfig {
 }
 
 export class Worker {
-  private intervalId: NodeJS.Timer | null = null;
+  private clearFunc: RandomIntervalClear | null = null;
+  private slotsInterval: NodeJS.Timer | null = null;
   private settingAppointment = false;
 
   constructor(
     private readonly priorityQueue: PriorityQueue = new PriorityQueue(),
+    private readonly slotsQueue: PriorityQueue = new PriorityQueue(),
     private readonly storageService = new StorageService(),
   ) {}
 
@@ -55,16 +56,29 @@ export class Worker {
     }
   };
 
+  schedule = (config: WorkerConfig): void => {
+    if (!this.slotsQueue.isEmpty()) {
+      const task = this.slotsQueue.dequeue();
+      this.handle(task, config).catch((err) => console.error(err));
+    }
+  };
+
   start = async (config: WorkerConfig): Promise<void> => {
-    this.intervalId = setInterval(() => this.tick(config), WORKER_INTERVAL);
+    this.clearFunc = setRandomInterval(() => this.tick(config), 500, 2000);
+    this.slotsInterval = setInterval(() => this.schedule(config), 300);
     await this.storageService.setIsSearching(true);
   };
 
   stop = async (): Promise<void> => {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
+    if (this.clearFunc) {
+      this.clearFunc.clear();
+      this.clearFunc = null;
       this.priorityQueue.clear();
+    }
+    if (this.slotsInterval) {
+      clearInterval(this.slotsInterval);
+      this.slotsInterval = null;
+      this.slotsQueue.clear();
     }
     await this.storageService.setIsSearching(false);
   };
@@ -92,6 +106,7 @@ export class Worker {
     const { locations, maxDaysUntilAppointment, userVisit, httpService } = config;
     const params: BaseParams = {
       priorityQueue: this.priorityQueue,
+      slotsQueue: this.slotsQueue,
       storage: this.storageService,
       analytics: new Analytics(),
       httpService,

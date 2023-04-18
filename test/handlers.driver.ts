@@ -21,6 +21,7 @@ const storageTestkit = browser.storage.local as unknown as LocalStorageTestkit;
 export class HandlersDriver {
   private baseParams: BaseParams = {
     priorityQueue: new PriorityQueue(),
+    slotsQueue: new PriorityQueue(),
     httpService: new HttpService(() => Promise.resolve()),
     storage: new StorageService(),
     analytics: new Analytics(),
@@ -65,6 +66,7 @@ export class HandlersDriver {
 
   get = {
     queueTasks: () => this.baseParams.priorityQueue.toArray(),
+    slotsQueue: () => this.baseParams.slotsQueue.toArray(),
     storageValue: (key: string) => storageTestkit.get(key),
     analyticsReports: () => mixpanelTestkit.getReports(),
   };

@@ -6,6 +6,7 @@ import { Analytics } from '@src/services/analytics';
 
 export interface BaseParams {
   priorityQueue: PriorityQueue;
+  slotsQueue: PriorityQueue;
   httpService: HttpService;
   storage: StorageService;
   analytics: Analytics;
