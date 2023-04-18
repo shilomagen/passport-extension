@@ -16,13 +16,14 @@ import {
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 import { Analytics } from '@src/services/analytics';
+import { DateRange } from '@src/lib/internal-types';
 
 const WORKER_INTERVAL = 500;
 
 export interface WorkerConfig {
   locations: Location[];
   userVisit: UserVisitSuccessData;
-  maxDaysUntilAppointment: number;
+  dateRange: DateRange;
   httpService: HttpService;
 }
 
@@ -89,7 +90,7 @@ export class Worker {
   }
 
   handle(task: Task, config: WorkerConfig) {
-    const { locations, maxDaysUntilAppointment, userVisit, httpService } = config;
+    const { locations, dateRange, userVisit, httpService } = config;
     const params: BaseParams = {
       priorityQueue: this.priorityQueue,
       storage: this.storageService,
@@ -101,7 +102,7 @@ export class Worker {
         new GetServiceByLocationHandler(params, locations).handle(task),
       )
       .with({ type: TaskType.GetServiceCalendar }, (task) =>
-        new GetServiceCalendarHandler(params, maxDaysUntilAppointment).handle(task),
+        new GetServiceCalendarHandler(params, dateRange).handle(task),
       )
       .with({ type: TaskType.GetCalendarSlot }, (task) => new GetSlotForCalendarHandler(params).handle(task))
       .with({ type: TaskType.ScheduleAppointment }, (task) => this.scheduleAppointment(task, userVisit, params))

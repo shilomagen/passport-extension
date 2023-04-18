@@ -1,9 +1,10 @@
 import { BaseHandler, BaseParams } from '@src/content-script/handlers/index';
 import { DateUtils } from '@src/lib/utils';
 import { GetServiceCalendarTask, Priority, TaskType } from '@src/content-script/task';
+import { DateRange } from '@src/lib/internal-types';
 
 export class Handler extends BaseHandler<GetServiceCalendarTask> {
-  constructor(params: BaseParams, private readonly maxDaysUntilAppointment: number) {
+  constructor(params: BaseParams, private readonly dateRange: DateRange) {
     super(params);
   }
 
@@ -12,7 +13,11 @@ export class Handler extends BaseHandler<GetServiceCalendarTask> {
     const { serviceId, location } = task.params;
     const calendars = await httpService.getCalendars(serviceId);
     const relevantCalendars = calendars.filter(({ calendarDate }) =>
-      DateUtils.isDateInDaysRange(calendarDate, this.maxDaysUntilAppointment),
+      DateUtils.isDateInRange(
+        calendarDate,
+        this.dateRange.firstDateForAppointment,
+        this.dateRange.lastDateForAppointment,
+      ),
     );
     relevantCalendars.map((calendar) => {
       priorityQueue.enqueue({
