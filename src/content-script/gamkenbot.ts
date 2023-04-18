@@ -42,7 +42,7 @@ export class Gamkenbot {
       const config: WorkerConfig = {
         locations,
         userVisit: preparedVisit.data,
-        dateRange: {
+        dateRangeForAppointment: {
           startDate: info.startDate,
           endDate: info.endDate,
         },

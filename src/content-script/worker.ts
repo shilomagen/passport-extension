@@ -23,7 +23,7 @@ const WORKER_INTERVAL = 500;
 export interface WorkerConfig {
   locations: Location[];
   userVisit: UserVisitSuccessData;
-  dateRange: DateRange;
+  dateRangeForAppointment: DateRange;
   httpService: HttpService;
 }
 
@@ -90,7 +90,7 @@ export class Worker {
   }
 
   handle(task: Task, config: WorkerConfig) {
-    const { locations, dateRange, userVisit, httpService } = config;
+    const { locations, dateRangeForAppointment, userVisit, httpService } = config;
     const params: BaseParams = {
       priorityQueue: this.priorityQueue,
       storage: this.storageService,
@@ -102,7 +102,7 @@ export class Worker {
         new GetServiceByLocationHandler(params, locations).handle(task),
       )
       .with({ type: TaskType.GetServiceCalendar }, (task) =>
-        new GetServiceCalendarHandler(params, dateRange).handle(task),
+        new GetServiceCalendarHandler(params, dateRangeForAppointment).handle(task),
       )
       .with({ type: TaskType.GetCalendarSlot }, (task) => new GetSlotForCalendarHandler(params).handle(task))
       .with({ type: TaskType.ScheduleAppointment }, (task) => this.scheduleAppointment(task, userVisit, params))

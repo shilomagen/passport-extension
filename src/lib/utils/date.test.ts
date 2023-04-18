@@ -19,19 +19,19 @@ describe('[Date Utils]', () => {
       const currentDate = '2023-04-15';
       expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(true);
     });
-    test('should return true if current date is equal to first', () => {
+    test('should return true if current date is equal to start date', () => {
       const currentDate = '2023-04-10';
       expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(true);
     });
-    test('should return true if current date is equal to endDate', () => {
+    test('should return true if current date is equal to end date', () => {
       const currentDate = '2023-04-20';
       expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(true);
     });
-    test('should return false if current date is before first date', () => {
+    test('should return false if current date is before start date', () => {
       const currentDate = '2023-04-05';
       expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(false);
     });
-    test('should return false if current date is after endDate', () => {
+    test('should return false if current date is after end date', () => {
       const startDate = new Date('2023-04-10');
       const endDate = new Date('2023-04-20');
       const currentDate = '2023-04-25';

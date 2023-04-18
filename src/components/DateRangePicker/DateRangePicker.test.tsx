@@ -86,41 +86,5 @@ describe('Date Range Picker', () => {
       const currentEndDate = driver.dateRangePickerDriver.get.endDateValue();
       expect(currentEndDate).toBe(defaultEndDate);
     });
-    //
-    // it('should not be able to select end date which is older then start date', async () => {
-    //   const { getByText, getByTestId } = render(<App />);
-    //   await waitFor(() => getByText(Content.title));
-    //
-    //   const startinput = getByTestId('start-date');
-    //   const newStartDate = moment().add(3, 'days').format(IsraelDateDigitsFormat);
-    //
-    //   fireEvent.click(startinput);
-    //   fireEvent.change(startinput, { target: { value: newStartDate } });
-    //   const calenderDateS = document.querySelector('.ant-picker-cell-selected');
-    //   expect(calenderDateS).not.toBe(null);
-    //   if (calenderDateS) {
-    //     fireEvent.click(calenderDateS);
-    //   }
-    //   fireEvent.click(startinput);
-    //
-    //   expect(startinput.getAttribute('value')).toBe(newStartDate);
-    //
-    //   const input = getByTestId('end-date');
-    //   const newendDateWhichIsOlderThenstartDate = moment().add(1, 'days').format(IsraelDateDigitsFormat);
-    //   const endDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
-    //
-    //   expect(input.getAttribute('value')).toBe(endDate);
-    //
-    //   fireEvent.mouseDown(input);
-    //   fireEvent.change(input, { target: { value: newendDateWhichIsOlderThenstartDate } });
-    //
-    //   const calenderDate = document.querySelector('.ant-picker-cell-selected');
-    //   expect(calenderDate).not.toBe(null);
-    //   if (calenderDate) {
-    //     fireEvent.click(calenderDate);
-    //   }
-    //
-    //   expect(input.getAttribute('value')).toBe(endDate);
-    // });
   });
 });
