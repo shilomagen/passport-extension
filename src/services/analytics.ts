@@ -7,6 +7,7 @@ const MIXPANEL_PUBLIC_TOKEN = 'c46304b0b7c1c715c013537a62026434';
 export enum AnalyticsEventType {
   StartSearch = 'start_search',
   SlotFound = 'slot_found',
+  AppointmentScheduled = 'appointment_scheduled',
   StopSearch = 'stop_search',
 }
 
