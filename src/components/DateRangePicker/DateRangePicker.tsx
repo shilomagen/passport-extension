@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import moment from 'moment/moment';
 import { UserMetadata } from '@src/services/storage';
 import Content from '@src/content.json';
 import { DatePicker, Typography } from 'antd';
@@ -6,7 +7,7 @@ import styles from './DateRangePicker.scss';
 import dayjs, { Dayjs } from 'dayjs';
 const { Text } = Typography;
 import { DateUtils, IsraelDateDigitsFormat } from '@src/lib/utils/date';
-import moment from 'moment/moment';
+import { DateRangePickerTestIds } from '@src/components/dataTestIds';
 
 interface IDateRangePickerProps {
   userMetadata: UserMetadata;
@@ -41,7 +42,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
           placeholder={Content.firstDateForAppointment.placeholder}
           className={styles.datePickerContainer}
           value={firstDate}
-          data-testid={'first-date'}
+          data-testid={DateRangePickerTestIds.START_DATE_PICKER}
           format={IsraelDateDigitsFormat}
           disabledDate={(date) => date && shouldDisabledDates(date, 'firstDate')}
           onChange={(_, dateString) => _onDateChange(dateString, 'firstDate')}
@@ -53,7 +54,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
           placeholder={Content.lastDateForAppointment.placeholder}
           className={styles.datePickerContainer}
           format={IsraelDateDigitsFormat}
-          data-testid={'last-date'}
+          data-testid={DateRangePickerTestIds.END_DATE_PICKER}
           disabledDate={(date) => date && shouldDisabledDates(date, 'lastDate')}
           value={lastDate}
           onChange={(_, dateString) => _onDateChange(dateString, 'lastDate')}

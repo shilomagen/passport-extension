@@ -1,165 +1,118 @@
-import { fireEvent, render, waitFor } from '@testing-library/react';
-import { App } from '@src/components/App';
-import Content from '@src/content.json';
+import React from 'react';
 import moment from 'moment/moment';
 import { IsraelDateDigitsFormat } from '@src/lib/utils';
-import React from 'react';
+import { PageBaseDriver } from '@test/RTL/RTLPageBaseDriver';
 
 describe('Date Range Picker', () => {
-  describe('default first and last dates values', () => {
-    it('should sets the first date to today`s date', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
-      const todayDate = moment().format(IsraelDateDigitsFormat);
+  const driver = new PageBaseDriver();
+  const yesterdayDate = moment().subtract(1, 'days').format(IsraelDateDigitsFormat);
+  const todayDate = moment().format(IsraelDateDigitsFormat);
+  const tomorrowDate = moment().add(1, 'days').format(IsraelDateDigitsFormat);
+  const defaultEndDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
 
-      const test = getByTestId('first-date').getAttribute('value');
-      expect(test).toEqual(todayDate);
+  beforeEach(() => driver.mount());
+
+  describe('default start and end dates values', () => {
+    it('should sets the start date to today`s date', async () => {
+      const startDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(startDate).toEqual(todayDate);
     });
 
-    it('should sets the last date to 14 days from today', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
-      const lastDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
-
-      const test = getByTestId('last-date').getAttribute('value');
-      expect(test).toEqual(lastDate);
+    it('should sets the end date to 14 days from today', async () => {
+      const endDate = driver.dateRangePickerDriver.get.endDateValue();
+      expect(endDate).toEqual(defaultEndDate);
     });
   });
 
   describe('Date Selection', () => {
-    it('should select the first date to be tomorrow', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
+    it('should select the start date to be tomorrow', async () => {
+      const startDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(startDate).toEqual(todayDate);
 
-      const input = getByTestId('first-date');
-      const tomorrowDate = moment().add(1, 'days').format(IsraelDateDigitsFormat);
-
-      fireEvent.click(input);
-      fireEvent.change(input, { target: { value: tomorrowDate } });
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      expect(calenderDate).not.toBe(null);
-      if (calenderDate) {
-        fireEvent.click(calenderDate);
-      }
-
-      expect(input.getAttribute('value')).toBe(tomorrowDate);
+      driver.dateRangePickerDriver.set.startDate(tomorrowDate);
+      const updatedStartDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(updatedStartDate).toBe(tomorrowDate);
     });
 
-    it('should select last date that is exactly 7 days from today', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
+    it('should select end date that is exactly 7 days from today', async () => {
+      const endDate = driver.dateRangePickerDriver.get.endDateValue();
+      expect(endDate).toEqual(defaultEndDate);
 
-      const input = getByTestId('last-date');
-      const tomorrowDate = moment().add(7, 'days').format(IsraelDateDigitsFormat);
+      const newEndDate = moment().add(7, 'days').format(IsraelDateDigitsFormat);
+      driver.dateRangePickerDriver.set.endDate(newEndDate);
 
-      fireEvent.mouseDown(input);
-      fireEvent.change(input, { target: { value: tomorrowDate } });
-
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      expect(calenderDate).not.toBe(null);
-      if (calenderDate) {
-        fireEvent.click(calenderDate);
-      }
-
-      expect(input.getAttribute('value')).toBe(tomorrowDate);
+      const updatedEndDate = driver.dateRangePickerDriver.get.endDateValue();
+      expect(updatedEndDate).toBe(newEndDate);
     });
   });
 
   describe('Invalid Date Selection', () => {
-    it('should not allow choosing a date in the past for first date', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
+    it('should not allow choosing a date in the past for start date', async () => {
+      const startDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(startDate).toEqual(todayDate);
 
-      const input = getByTestId('first-date');
-      const todayDate = moment().format(IsraelDateDigitsFormat);
-      const yesterdayDate = moment().subtract(1, 'days').format(IsraelDateDigitsFormat);
+      // Try to select a disabled date
+      driver.dateRangePickerDriver.set.startDate(yesterdayDate);
 
-      expect(input.getAttribute('value')).toBe(todayDate);
-
-      fireEvent.mouseDown(input);
-      fireEvent.change(input, { target: { value: yesterdayDate } });
-
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      expect(calenderDate).not.toBe(null);
-      if (calenderDate) {
-        fireEvent.click(calenderDate);
-      }
-
-      expect(input.getAttribute('value')).toBe(todayDate);
+      // start date should not change
+      const currentStartDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(currentStartDate).toBe(todayDate);
     });
 
-    it('should not allow choosing a first date that is after the last date', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
+    it('should not allow choosing a start date that is after the end date', async () => {
+      const startDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(startDate).toEqual(todayDate);
 
-      const input = getByTestId('first-date');
-      const lastDateInput = getByTestId('last-date').getAttribute('value');
+      const dateAfterEndDate = moment(defaultEndDate, IsraelDateDigitsFormat)
+        .add(5, 'days')
+        .format(IsraelDateDigitsFormat);
 
-      const todayDate = moment().format(IsraelDateDigitsFormat);
-      expect(input.getAttribute('value')).toBe(todayDate);
+      // Try to select a disabled date
+      driver.dateRangePickerDriver.set.startDate(dateAfterEndDate);
 
-      const dateAfterLastDate = moment(lastDateInput).add(5, 'days').format(IsraelDateDigitsFormat);
-
-      fireEvent.mouseDown(input);
-      fireEvent.change(input, { target: { value: dateAfterLastDate } });
-
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      expect(calenderDate).not.toBe(null);
-      if (calenderDate) {
-        fireEvent.click(calenderDate);
-      }
-
-      expect(input.getAttribute('value')).toBe(todayDate);
+      // start date should not change
+      const currentStartDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(currentStartDate).toBe(todayDate);
     });
 
-    it('should not allow choosing a last date that is in the past', async () => {
-      const { getByText, getByTestId } = render(<App />);
-      await waitFor(() => getByText(Content.title));
+    it('should not allow choosing a end date that is in the past', async () => {
+      const endDate = driver.dateRangePickerDriver.get.endDateValue();
+      expect(endDate).toEqual(defaultEndDate);
 
-      const input = getByTestId('last-date');
-      const lastDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
-      const yesterdayDate = moment().subtract(1, 'days').format(IsraelDateDigitsFormat);
+      // Try to select a disabled date
+      driver.dateRangePickerDriver.set.endDate(yesterdayDate);
 
-      expect(input.getAttribute('value')).toBe(lastDate);
-
-      fireEvent.mouseDown(input);
-      fireEvent.change(input, { target: { value: yesterdayDate } });
-
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      expect(calenderDate).not.toBe(null);
-      if (calenderDate) {
-        fireEvent.click(calenderDate);
-      }
-
-      expect(input.getAttribute('value')).toBe(lastDate);
+      // end date should not change
+      const currentEndDate = driver.dateRangePickerDriver.get.endDateValue();
+      expect(currentEndDate).toBe(defaultEndDate);
     });
     //
-    // it('should not be able to select last date which is older then first date', async () => {
+    // it('should not be able to select end date which is older then start date', async () => {
     //   const { getByText, getByTestId } = render(<App />);
     //   await waitFor(() => getByText(Content.title));
     //
-    //   const firstinput = getByTestId('first-date');
+    //   const startinput = getByTestId('start-date');
     //   const newStartDate = moment().add(3, 'days').format(IsraelDateDigitsFormat);
     //
-    //   fireEvent.click(firstinput);
-    //   fireEvent.change(firstinput, { target: { value: newStartDate } });
+    //   fireEvent.click(startinput);
+    //   fireEvent.change(startinput, { target: { value: newStartDate } });
     //   const calenderDateS = document.querySelector('.ant-picker-cell-selected');
     //   expect(calenderDateS).not.toBe(null);
     //   if (calenderDateS) {
     //     fireEvent.click(calenderDateS);
     //   }
-    //   fireEvent.click(firstinput);
+    //   fireEvent.click(startinput);
     //
-    //   expect(firstinput.getAttribute('value')).toBe(newStartDate);
+    //   expect(startinput.getAttribute('value')).toBe(newStartDate);
     //
-    //   const input = getByTestId('last-date');
-    //   const newLastDateWhichIsOlderThenFirstDate = moment().add(1, 'days').format(IsraelDateDigitsFormat);
-    //   const lastDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
+    //   const input = getByTestId('end-date');
+    //   const newendDateWhichIsOlderThenstartDate = moment().add(1, 'days').format(IsraelDateDigitsFormat);
+    //   const endDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
     //
-    //   expect(input.getAttribute('value')).toBe(lastDate);
+    //   expect(input.getAttribute('value')).toBe(endDate);
     //
     //   fireEvent.mouseDown(input);
-    //   fireEvent.change(input, { target: { value: newLastDateWhichIsOlderThenFirstDate } });
+    //   fireEvent.change(input, { target: { value: newendDateWhichIsOlderThenstartDate } });
     //
     //   const calenderDate = document.querySelector('.ant-picker-cell-selected');
     //   expect(calenderDate).not.toBe(null);
@@ -167,7 +120,7 @@ describe('Date Range Picker', () => {
     //     fireEvent.click(calenderDate);
     //   }
     //
-    //   expect(input.getAttribute('value')).toBe(lastDate);
+    //   expect(input.getAttribute('value')).toBe(endDate);
     // });
   });
 });
