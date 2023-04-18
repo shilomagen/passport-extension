@@ -7,9 +7,9 @@ export const IsraelDateDigitsFormat = 'DD-MM-YYYY';
 const padIfNeeded = (digit: number) => (`${digit}`.length === 1 ? `0${digit}` : `${digit}`);
 
 export const DateUtils = {
-  isDateInRange: (date: string, firstDate: Date, lastDate: Date): boolean => {
+  isDateInRange: (date: string, startDate: Date, endDate: Date): boolean => {
     const dateFormat = new Date(date);
-    return dateFormat >= firstDate && dateFormat <= lastDate;
+    return dateFormat >= startDate && dateFormat <= endDate;
   },
   isBefore: (currentDate: Date, compareDate: Date): boolean => currentDate < compareDate,
   isAfter: (currentDate: Date, compareDate: Date): boolean => currentDate > compareDate,

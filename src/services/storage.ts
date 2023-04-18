@@ -6,8 +6,8 @@ export interface UserMetadata {
   id: string;
   phone: string;
   cities: string[];
-  firstDate: number;
-  lastDate: number;
+  startDate: number;
+  endDate: number;
 }
 
 const USER_METADATA_KEY = 'userMetadata';

@@ -13,29 +13,29 @@ describe('[Date Utils]', () => {
   });
 
   describe('isDateInRange', () => {
-    const firstDate = new Date('2023-04-10');
-    const lastDate = new Date('2023-04-20');
+    const startDate = new Date('2023-04-10');
+    const endDate = new Date('2023-04-20');
     test('should return true if current date is within date range', () => {
       const currentDate = '2023-04-15';
-      expect(DateUtils.isDateInRange(currentDate, firstDate, lastDate)).toBe(true);
+      expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(true);
     });
     test('should return true if current date is equal to first', () => {
       const currentDate = '2023-04-10';
-      expect(DateUtils.isDateInRange(currentDate, firstDate, lastDate)).toBe(true);
+      expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(true);
     });
-    test('should return true if current date is equal to lastDate', () => {
+    test('should return true if current date is equal to endDate', () => {
       const currentDate = '2023-04-20';
-      expect(DateUtils.isDateInRange(currentDate, firstDate, lastDate)).toBe(true);
+      expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(true);
     });
     test('should return false if current date is before first date', () => {
       const currentDate = '2023-04-05';
-      expect(DateUtils.isDateInRange(currentDate, firstDate, lastDate)).toBe(false);
+      expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(false);
     });
-    test('should return false if current date is after lastDate', () => {
-      const firstDate = new Date('2023-04-10');
-      const lastDate = new Date('2023-04-20');
+    test('should return false if current date is after endDate', () => {
+      const startDate = new Date('2023-04-10');
+      const endDate = new Date('2023-04-20');
       const currentDate = '2023-04-25';
-      expect(DateUtils.isDateInRange(currentDate, firstDate, lastDate)).toBe(false);
+      expect(DateUtils.isDateInRange(currentDate, startDate, endDate)).toBe(false);
     });
   });
 

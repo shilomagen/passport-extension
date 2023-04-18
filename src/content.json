@@ -22,11 +22,11 @@
     "disconnected": "מנותק"
   },
   "numOfDays": "מספר הימים",
-  "firstDateForAppointment": {
+  "startDateForAppointment": {
     "title": "מתאריך:",
     "placeholder": "בחרו תאריך ראשון לתור..."
   },
-  "lastDateForAppointment": {
+  "endDateForAppointment": {
     "title": "עד תאריך:",
     "placeholder": "בחרו תאריך אחרון לתור..."
   },

@@ -12,6 +12,13 @@ export class RTLDateRangePickerDriver {
     return this.renderResult.getByTestId(DateRangePickerTestIds.END_DATE_PICKER);
   }
 
+  private setDate(element: Element, updatedDate: string) {
+    fireEvent.mouseDown(element);
+    fireEvent.change(element, { target: { value: updatedDate } });
+    const calenderDate = document.querySelector('.ant-picker-cell-selected') as Element;
+    fireEvent.click(calenderDate);
+  }
+
   get = {
     startDateValue: () => this.getStartDateElement().getAttribute('value'),
 
@@ -21,22 +28,12 @@ export class RTLDateRangePickerDriver {
   set = {
     startDate: (date: string) => {
       const element = this.getStartDateElement();
-      fireEvent.mouseDown(element);
-      fireEvent.change(element, { target: { value: date } });
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      fireEvent.click(calenderDate);
+      this.setDate(element, date);
     },
 
     endDate: (date: string) => {
       const element = this.getEndDateElement();
-      fireEvent.mouseDown(element);
-      fireEvent.change(element, { target: { value: date } });
-      const calenderDate = document.querySelector('.ant-picker-cell-selected');
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      fireEvent.click(calenderDate);
+      this.setDate(element, date);
     },
   };
 }

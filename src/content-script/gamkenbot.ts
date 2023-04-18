@@ -43,8 +43,8 @@ export class Gamkenbot {
         locations,
         userVisit: preparedVisit.data,
         dateRange: {
-          firstDateForAppointment: info.firstDate,
-          lastDateForAppointment: info.lastDate,
+          startDate: info.startDate,
+          endDate: info.endDate,
         },
         httpService: this.httpService,
       };

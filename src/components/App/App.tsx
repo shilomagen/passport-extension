@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { StorageService, UserMetadata } from '@src/services/storage';
 import { Button, Input, Select, Typography } from 'antd';
-import { DateRangePicker } from '@src/components/DateRangePicker/DateRangePicker';
+import { DateOptions, DateRangePicker } from '@src/components/DateRangePicker/DateRangePicker';
 import Content from '@src/content.json';
 import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
@@ -27,8 +27,8 @@ export const App: FunctionComponent = () => {
     phone: '',
     cities: [],
     id: '',
-    firstDate: new Date().getTime(),
-    lastDate: addDays(new Date(), 14).getTime(),
+    startDate: new Date().getTime(),
+    endDate: addDays(new Date(), 14).getTime(),
   });
   const [consent, setConsent] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -43,14 +43,14 @@ export const App: FunctionComponent = () => {
     void storageService.setConsent(val);
   };
 
-  const { id, phone, cities, firstDate, lastDate } = userMetadata;
+  const { id, phone, cities, startDate, endDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && firstDate > 0 && lastDate > 0;
+  const submitEnabled = id && phone && cities.length > 0 && consent && startDate > 0 && endDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id, firstDate, lastDate } = metadata;
-    setUserMetadata({ cities, phone, id, firstDate, lastDate });
+    const { cities, phone, id, startDate, endDate } = metadata;
+    setUserMetadata({ cities, phone, id, startDate, endDate });
   };
 
   const setMetadata =
@@ -69,7 +69,7 @@ export const App: FunctionComponent = () => {
     });
   }, []);
 
-  const onDateChange = (dateSelected: Date, dateOption: 'firstDate' | 'lastDate') => {
+  const onDateChange = (dateSelected: Date, dateOption: DateOptions) => {
     setMetadata(dateOption)(new Date(dateSelected).getTime());
   };
 

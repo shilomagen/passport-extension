@@ -9,27 +9,32 @@ const { Text } = Typography;
 import { DateUtils, IsraelDateDigitsFormat } from '@src/lib/utils/date';
 import { DateRangePickerTestIds } from '@src/components/dataTestIds';
 
+export enum DateOptions {
+  START_DATE = 'startDate',
+  END_DATE = 'endDate',
+}
+
 interface IDateRangePickerProps {
   userMetadata: UserMetadata;
-  onDateChange: (selectedDate: Date, dateOption: 'firstDate' | 'lastDate') => void;
+  onDateChange: (selectedDate: Date, dateOption: DateOptions) => void;
 }
 
 export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDateChange, userMetadata }) => {
-  const firstDate = userMetadata.firstDate ? dayjs(userMetadata.firstDate) : undefined;
-  const lastDate = userMetadata.lastDate ? dayjs(userMetadata.lastDate) : undefined;
+  const startDate = userMetadata.startDate ? dayjs(userMetadata.startDate) : undefined;
+  const endDate = userMetadata.endDate ? dayjs(userMetadata.endDate) : undefined;
 
-  const shouldDisabledDates = (currentDate: Dayjs, dateOption: 'firstDate' | 'lastDate'): boolean => {
+  const shouldDisabledDates = (currentDate: Dayjs, dateOption: DateOptions): boolean => {
     /* First Date - Disable all dates before today's date or before the chosen first date for appointment
      Last Date - Disable all dates before today's date or after the chosen last date for appointment */
     const todayDate = new Date().toDateString();
     const isBeforeToday = DateUtils.isBefore(currentDate.toDate(), new Date(todayDate));
-    const isAfterLastDate = !!lastDate && DateUtils.isAfter(currentDate.toDate(), lastDate.toDate());
-    const isBeforeFirstDate = !!firstDate && DateUtils.isBefore(currentDate.toDate(), firstDate.toDate());
+    const isAfterEndDate = !!endDate && DateUtils.isAfter(currentDate.toDate(), endDate.toDate());
+    const isBeforeStartDate = !!startDate && DateUtils.isBefore(currentDate.toDate(), startDate.toDate());
 
-    return isBeforeToday || (dateOption === 'firstDate' ? isAfterLastDate : isBeforeFirstDate);
+    return isBeforeToday || (dateOption === DateOptions.START_DATE ? isAfterEndDate : isBeforeStartDate);
   };
 
-  const _onDateChange = (dateString: string, dateOption: 'firstDate' | 'lastDate') => {
+  const _onDateChange = (dateString: string, dateOption: DateOptions) => {
     const selectedDate = moment(dateString, IsraelDateDigitsFormat).toDate();
     onDateChange(selectedDate, dateOption);
   };
@@ -37,27 +42,27 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
   return (
     <div className={styles.container}>
       <div className={styles.dateContainer}>
-        <Text>{Content.firstDateForAppointment.title}</Text>
+        <Text>{Content.startDateForAppointment.title}</Text>
         <DatePicker
-          placeholder={Content.firstDateForAppointment.placeholder}
+          placeholder={Content.startDateForAppointment.placeholder}
           className={styles.datePickerContainer}
-          value={firstDate}
+          value={startDate}
           data-testid={DateRangePickerTestIds.START_DATE_PICKER}
           format={IsraelDateDigitsFormat}
-          disabledDate={(date) => date && shouldDisabledDates(date, 'firstDate')}
-          onChange={(_, dateString) => _onDateChange(dateString, 'firstDate')}
+          disabledDate={(date) => date && shouldDisabledDates(date, DateOptions.START_DATE)}
+          onChange={(_, dateString) => _onDateChange(dateString, DateOptions.START_DATE)}
         />
       </div>
       <div className={styles.dateContainer}>
-        <Text>{Content.lastDateForAppointment.title}</Text>
+        <Text>{Content.endDateForAppointment.title}</Text>
         <DatePicker
-          placeholder={Content.lastDateForAppointment.placeholder}
+          placeholder={Content.endDateForAppointment.placeholder}
           className={styles.datePickerContainer}
           format={IsraelDateDigitsFormat}
           data-testid={DateRangePickerTestIds.END_DATE_PICKER}
-          disabledDate={(date) => date && shouldDisabledDates(date, 'lastDate')}
-          value={lastDate}
-          onChange={(_, dateString) => _onDateChange(dateString, 'lastDate')}
+          disabledDate={(date) => date && shouldDisabledDates(date, DateOptions.END_DATE)}
+          value={endDate}
+          onChange={(_, dateString) => _onDateChange(dateString, DateOptions.END_DATE)}
         />
       </div>
     </div>
