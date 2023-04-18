@@ -6,6 +6,7 @@ export interface UserMetadata {
   id: string;
   phone: string;
   cities: string[];
+  firstDate: number;
   lastDate: number;
 }
 

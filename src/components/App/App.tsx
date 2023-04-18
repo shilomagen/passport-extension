@@ -26,6 +26,7 @@ export const App: FunctionComponent = () => {
     phone: '',
     cities: [],
     id: '',
+    firstDate: addDays(new Date(), 1).getTime(),
     lastDate: addDays(new Date(), 14).getTime(),
   });
   const [consent, setConsent] = useState(false);
@@ -41,14 +42,14 @@ export const App: FunctionComponent = () => {
     void storageService.setConsent(val);
   };
 
-  const { id, phone, cities, lastDate } = userMetadata;
+  const { id, phone, cities, lastDate, firstDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
+  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0 && firstDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id, lastDate } = metadata;
-    setUserMetadata({ cities, phone, id, lastDate });
+    const { cities, phone, id, firstDate, lastDate } = metadata;
+    setUserMetadata({ cities, phone, id, firstDate, lastDate });
   };
 
   const setMetadata =
@@ -67,9 +68,9 @@ export const App: FunctionComponent = () => {
     });
   }, []);
 
-  const onDateChange = (dateString: string) => {
+  const onDateChange = (dateString: string, dateOption: 'firstDate' | 'lastDate') => {
     const dateSelected = new Date(dateString);
-    setMetadata('lastDate')(new Date(dateSelected).getTime());
+    setMetadata(dateOption)(new Date(dateSelected).getTime());
   };
 
   const getMyVisitTab = async (): Promise<Tab | null> => {
@@ -136,13 +137,26 @@ export const App: FunctionComponent = () => {
         listHeight={200}
         className={styles.selectContainer}
       />
-      <Text>{Content.maxDateForAppointment.title}</Text>
-      <DatePicker
-        placeholder={Content.maxDateForAppointment.placeholder}
-        className={styles.datePickerContainer}
-        value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
-        onChange={(_, dateString) => onDateChange(dateString)}
-      />
+      <div className={styles.dateFrameContainer}>
+        <div className={styles.dateContainer}>
+          <Text>{Content.firstDateForAppointment.title}</Text>
+          <DatePicker
+            placeholder={Content.firstDateForAppointment.placeholder}
+            className={styles.datePickerContainer}
+            value={userMetadata.firstDate ? dayjs(userMetadata.firstDate) : null}
+            onChange={(_, dateString) => onDateChange(dateString, 'firstDate')}
+          />
+        </div>
+        <div className={styles.dateContainer}>
+          <Text>{Content.lastDateForAppointment.title}</Text>
+          <DatePicker
+            placeholder={Content.lastDateForAppointment.placeholder}
+            className={styles.datePickerContainer}
+            value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
+            onChange={(_, dateString) => onDateChange(dateString, 'lastDate')}
+          />
+        </div>
+      </div>
       <div className={styles.consentContainer}>
         <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>

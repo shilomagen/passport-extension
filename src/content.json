@@ -22,9 +22,13 @@
     "disconnected": "מנותק"
   },
   "numOfDays": "מספר הימים",
-  "maxDateForAppointment": {
-    "title": "תאריך מקסימלי לתור:",
-    "placeholder": "בחרו תאריך מקסימלי לתור..."
+  "firstDateForAppointment": {
+    "title": "מתאריך:",
+    "placeholder": "בחרו תאריך ראשון לתור..."
+  },
+  "lastDateForAppointment": {
+    "title": "עד תאריך:",
+    "placeholder": "בחרו תאריך אחרון לתור..."
   },
   "title": "גם כן בוט",
   "consent": {

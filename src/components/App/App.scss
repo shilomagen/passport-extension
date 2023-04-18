@@ -18,7 +18,7 @@
 
 .datePickerContainer {
   margin-bottom: 20px;
-  width: 250px;
+  width: 230px;
 }
 
 .searchingGif {
@@ -44,3 +44,14 @@
 .consentContainer {
   margin-bottom: 20px;
 }
+
+.dateFrameContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.dateContainer {
+  flex: 50%;
+}
+
+
