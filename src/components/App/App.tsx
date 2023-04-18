@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { StorageService, UserMetadata } from '@src/services/storage';
-import { Button, DatePicker, Input, Select, Typography } from 'antd';
+import { Button, Input, Select, Typography } from 'antd';
+import { DateRangePicker } from '@src/components/DateRangePicker/DateRangePicker';
 import Content from '@src/content.json';
 import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
@@ -9,10 +10,10 @@ import browser, { Tabs } from 'webextension-polyfill';
 import { ActionTypes, ReportAnalyticsMessage } from '@src/platform-message';
 import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
-import dayjs from 'dayjs';
 import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
 import { AnalyticsEventType } from '@src/services/analytics';
+
 import Tab = Tabs.Tab;
 
 const { Title, Text } = Typography;
@@ -26,7 +27,7 @@ export const App: FunctionComponent = () => {
     phone: '',
     cities: [],
     id: '',
-    firstDate: addDays(new Date(), 1).getTime(),
+    firstDate: new Date().getTime(),
     lastDate: addDays(new Date(), 14).getTime(),
   });
   const [consent, setConsent] = useState(false);
@@ -42,9 +43,9 @@ export const App: FunctionComponent = () => {
     void storageService.setConsent(val);
   };
 
-  const { id, phone, cities, lastDate, firstDate } = userMetadata;
+  const { id, phone, cities, firstDate, lastDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0 && firstDate > 0;
+  const submitEnabled = id && phone && cities.length > 0 && consent && firstDate > 0 && lastDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
@@ -68,8 +69,7 @@ export const App: FunctionComponent = () => {
     });
   }, []);
 
-  const onDateChange = (dateString: string, dateOption: 'firstDate' | 'lastDate') => {
-    const dateSelected = new Date(dateString);
+  const onDateChange = (dateSelected: Date, dateOption: 'firstDate' | 'lastDate') => {
     setMetadata(dateOption)(new Date(dateSelected).getTime());
   };
 
@@ -137,26 +137,7 @@ export const App: FunctionComponent = () => {
         listHeight={200}
         className={styles.selectContainer}
       />
-      <div className={styles.dateFrameContainer}>
-        <div className={styles.dateContainer}>
-          <Text>{Content.firstDateForAppointment.title}</Text>
-          <DatePicker
-            placeholder={Content.firstDateForAppointment.placeholder}
-            className={styles.datePickerContainer}
-            value={userMetadata.firstDate ? dayjs(userMetadata.firstDate) : null}
-            onChange={(_, dateString) => onDateChange(dateString, 'firstDate')}
-          />
-        </div>
-        <div className={styles.dateContainer}>
-          <Text>{Content.lastDateForAppointment.title}</Text>
-          <DatePicker
-            placeholder={Content.lastDateForAppointment.placeholder}
-            className={styles.datePickerContainer}
-            value={userMetadata.lastDate ? dayjs(userMetadata.lastDate) : null}
-            onChange={(_, dateString) => onDateChange(dateString, 'lastDate')}
-          />
-        </div>
-      </div>
+      <DateRangePicker userMetadata={userMetadata} onDateChange={onDateChange} />
       <div className={styles.consentContainer}>
         <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>
