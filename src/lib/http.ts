@@ -90,10 +90,10 @@ export class HttpService {
       .then((res) => (res.data.Results ?? []).map(toService));
   }
 
-  public async getCalendars(serviceId: number): Promise<EnrichedService[]> {
+  public async getCalendars(serviceId: number, startDate?: number): Promise<EnrichedService[]> {
     const params: SearchAvailableDatesRequest = {
       maxResults: 100,
-      startDate: DateUtils.toApiFormattedDate(Date.now()),
+      startDate: DateUtils.toApiFormattedDate(startDate ?? Date.now()),
       serviceId,
     };
     const result = await this.httpClient.get<SearchAvailableDatesResponse>(Urls.searchAvailableDates, { params });

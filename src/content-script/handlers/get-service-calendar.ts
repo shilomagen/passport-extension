@@ -11,12 +11,12 @@ export class Handler extends BaseHandler<GetServiceCalendarTask> {
   async handle(task: GetServiceCalendarTask): Promise<void> {
     const { httpService, priorityQueue } = this.params;
     const { serviceId, location } = task.params;
-    const calendars = await httpService.getCalendars(serviceId);
+    const calendars = await httpService.getCalendars(serviceId, this.dateRange.firstDateForAppointment);
     const relevantCalendars = calendars.filter(({ calendarDate }) =>
       DateUtils.isDateInRange(
         calendarDate,
-        this.dateRange.firstDateForAppointment,
-        this.dateRange.lastDateForAppointment,
+        new Date(this.dateRange.firstDateForAppointment),
+        new Date(this.dateRange.lastDateForAppointment),
       ),
     );
     relevantCalendars.map((calendar) => {

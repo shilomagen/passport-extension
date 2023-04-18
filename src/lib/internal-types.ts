@@ -45,8 +45,8 @@ export interface User {
 }
 
 export interface DateRange {
-  firstDateForAppointment: Date;
-  lastDateForAppointment: Date;
+  firstDateForAppointment: number;
+  lastDateForAppointment: number;
 }
 
 export interface UserVisitSuccessData {
