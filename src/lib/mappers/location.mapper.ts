@@ -7,7 +7,6 @@ export function toLocation(result: LocationSearchResult): Location {
     city: result.City,
     address: `${result.Address1} ${result.Address2}`,
     description: result.Description,
-    name: result.LocationName
-  }
-
+    name: result.LocationName,
+  };
 }
