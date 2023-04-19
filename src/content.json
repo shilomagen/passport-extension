@@ -9,7 +9,7 @@
   },
   "citiesLabel": "ערים",
   "citiesPlaceholder": "חפשו ערים...",
-  "maxCitiesText": "אנא בחרו עד 4 ערים (אחרת הבוט יחסם):",
+  "maxCitiesText": "אנא בחרו עד {MAX_CITIES} ערים (אחרת הבוט יחסם):",
   "noCitiesFound": "לא נמצאו ערים",
   "buttons": {
     "search": "חפשו לי תור",

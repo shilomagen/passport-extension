@@ -42,6 +42,4 @@ export interface LocationSearchResult {
   MaxWaitingTime: number;
 }
 
-export type LocationSearchResponse = CommonResultsResponse<LocationSearchResult[]>
-
-
+export type LocationSearchResponse = CommonResultsResponse<LocationSearchResult[]>;
