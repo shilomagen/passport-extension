@@ -18,7 +18,7 @@ import { EnrichedService, Service } from './internal-types';
 import { toService } from './mappers';
 import { GetUserInfoResponse } from '@src/lib/api/user-info';
 
-export const BaseURL = 'https://central.myvisit.com/CentralAPI';
+export const BaseURL = 'https://piba-api.myvisit.com/CentralAPI';
 export const PartialURLs = {
   createAnonymousSession: 'UserCreateAnonymous',
   locationSearch: 'LocationSearch',
@@ -52,9 +52,11 @@ export class HttpService {
     this.httpClient = axios.create({
       headers: {
         // MyVisit default configuration
-        'application-api-key': '8640a12d-52a7-4c2a-afe1-4411e00e3ac4',
-        'application-name': 'myVisit.com v3.5',
+        'application-api-key': 'D7662A08-48D1-4BC8-9E45-7F9DDF8987E3',
+        'application-name': 'PibaV1',
         'accept-language': 'en',
+        pragma: 'no-cache',
+        'cache-control': 'no-cache',
       },
       withCredentials: true,
     });

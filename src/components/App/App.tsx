@@ -88,7 +88,7 @@ export const App: FunctionComponent = () => {
       await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StartSearch });
       await browser.tabs.sendMessage(maybeMyVisitTab.id!, {
         action: ActionTypes.ReportAnalytics,
-        payload: { type: AnalyticsEventType.StartSearch },
+        payload: { type: AnalyticsEventType.StartSearch, payload: { cities: cities.join(',') } },
       } as ReportAnalyticsMessage);
       setSearching(true);
     }

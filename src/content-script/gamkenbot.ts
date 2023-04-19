@@ -6,18 +6,17 @@ import { ResponseStatus } from '@src/lib/internal-types';
 import { Locations } from '@src/lib/locations';
 
 export class Gamkenbot {
-  private readonly httpService;
+  constructor(private readonly worker = new Worker(), private readonly storageService = new StorageService()) {}
 
-  constructor(private readonly worker = new Worker(), private readonly storageService = new StorageService()) {
-    this.httpService = new HttpService(async () => {
-      await worker.stop();
-      await storageService.setLoggedIn(false);
-    });
-  }
+  onRejectError = async () => {
+    await this.worker.stop();
+    await this.storageService.setLoggedIn(false);
+  };
 
   setLoggedIn = async (): Promise<boolean> => {
+    const httpService = new HttpService(this.onRejectError);
     try {
-      const userInfo = await this.httpService.getUserInfo();
+      const userInfo = await httpService.getUserInfo();
       await this.storageService.setLoggedIn(userInfo?.Results !== null);
       return true;
     } catch (e: unknown) {
@@ -27,8 +26,9 @@ export class Gamkenbot {
   };
 
   startSearching = async (): Promise<boolean> => {
+    const httpService = new HttpService(this.onRejectError);
     const info = await this.storageService.getUserMetadata();
-    const visitService = new VisitService(this.httpService);
+    const visitService = new VisitService(httpService);
 
     if (!info) {
       return false;
@@ -37,7 +37,7 @@ export class Gamkenbot {
     const preparedVisit = await visitService.prepare(info);
 
     if (preparedVisit.status === ResponseStatus.Success) {
-      this.httpService.updateVisitToken(preparedVisit.data.visitToken);
+      httpService.updateVisitToken(preparedVisit.data.visitToken);
       const locations = Locations.filter((location) => info.cities.includes(location.city));
       const config: WorkerConfig = {
         locations,
@@ -46,7 +46,7 @@ export class Gamkenbot {
           startDate: info.startDate,
           endDate: info.endDate,
         },
-        httpService: this.httpService,
+        httpService: httpService,
       };
       await this.worker.start(config);
 

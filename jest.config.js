@@ -93,7 +93,7 @@ module.exports = {
   testEnvironment: 'jest-environment-jsdom',
   // Options that will be passed to the testEnvironment
   testEnvironmentOptions: {
-    url: 'https://central.myvisit.com',
+    url: 'https://piba-api.myvisit.com',
   },
   // Adds a location field to test results
   // testLocationInResults: false,

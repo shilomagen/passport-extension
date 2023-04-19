@@ -20,7 +20,7 @@ describe('[GetSlotForCalendar Handler]', () => {
     driver.given.slotsByCalendarId(calendarId, serviceId, response);
     const enrichedService: EnrichedService = { serviceId, calendarDate, calendarId };
     await driver.when.getSlotForCalendar({ location: defaultLocation, enrichedService });
-    expect(driver.get.queueTasks()).toContainEqual<ScheduleAppointmentTask>({
+    expect(driver.get.slotsQueue()).toContainEqual<ScheduleAppointmentTask>({
       params: {
         slot: expect.objectContaining({
           timeSinceMidnight: slot.Time,
