@@ -15,7 +15,6 @@ import {
 } from '@src/content-script/task';
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
-import { Analytics } from '@src/services/analytics';
 import setRandomInterval, { RandomIntervalClear } from '@src/utils/random-interval';
 
 export interface WorkerConfig {
@@ -64,7 +63,7 @@ export class Worker {
   };
 
   start = async (config: WorkerConfig): Promise<void> => {
-    this.clearFunc = setRandomInterval(() => this.tick(config), 500, 2000);
+    this.clearFunc = setRandomInterval(() => this.tick(config), 500, 1500);
     this.slotsInterval = setInterval(() => this.schedule(config), 300);
     await this.storageService.setIsSearching(true);
   };
@@ -108,7 +107,6 @@ export class Worker {
       priorityQueue: this.priorityQueue,
       slotsQueue: this.slotsQueue,
       storage: this.storageService,
-      analytics: new Analytics(),
       httpService,
     };
     return match(task)
