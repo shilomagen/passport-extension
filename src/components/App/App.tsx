@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
 import { AnalyticsEventType } from '@src/services/analytics';
+import { validateIsraeliIdNumber, validatePhoneNumber, validateNumberOfAllowedCities } from '@src/validators/validators';
 import Tab = Tabs.Tab;
 
 const { Title, Text } = Typography;
@@ -43,7 +44,13 @@ export const App: FunctionComponent = () => {
 
   const { id, phone, cities, lastDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && lastDate > 0;
+  const submitEnabled = (
+    validateIsraeliIdNumber(id) &&
+    validatePhoneNumber(phone) &&
+    cities.length > 0 &&
+    cities.length <= 4 &&
+    consent && lastDate > 0
+  );
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
@@ -116,6 +123,7 @@ export const App: FunctionComponent = () => {
         name="id"
         value={userMetadata.id}
         placeholder={Content.id.placeholder}
+        status={validateIsraeliIdNumber(userMetadata.id) ? '' : 'error'}
         onChange={(e) => setMetadata('id')(e.target.value)}
       />
       <Input
@@ -124,8 +132,9 @@ export const App: FunctionComponent = () => {
         name="phone"
         value={userMetadata.phone}
         placeholder={Content.phone.placeholder}
+        status={validatePhoneNumber(userMetadata.phone) ? '' : 'error'}
         onChange={(e) => setMetadata('phone')(e.target.value)}
-      />
+        />
       <Text>{Content.maxCitiesText}</Text>
       <Select
         options={ALL_CITIES}
@@ -134,6 +143,7 @@ export const App: FunctionComponent = () => {
         onChange={setMetadata('cities')}
         mode="multiple"
         listHeight={200}
+        status={validateNumberOfAllowedCities(userMetadata.cities) ? 'error' : ''}
         className={styles.selectContainer}
       />
       <Text>{Content.maxDateForAppointment.title}</Text>
