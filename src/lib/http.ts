@@ -55,8 +55,6 @@ export class HttpService {
         'application-api-key': 'D7662A08-48D1-4BC8-9E45-7F9DDF8987E3',
         'application-name': 'PibaV1',
         'accept-language': 'en',
-        pragma: 'no-cache',
-        'cache-control': 'no-cache',
       },
       withCredentials: true,
     });
