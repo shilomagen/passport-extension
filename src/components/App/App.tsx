@@ -13,6 +13,7 @@ import { ActionTypes, PlatformMessage } from '@src/platform-message';
 import { SearchStatusType, SearchStatus } from '@src/lib/internal-types';
 import { MainButton } from '../MainButton/MainButton';
 import { SearchMessage } from '../MainButton/SearchMessage';
+import { VersionInfo } from '@src/components/VersionInfo/VersionInfo';
 
 const { Title } = Typography;
 
@@ -53,6 +54,7 @@ export const App: FunctionComponent = () => {
 
       <div>
         <Title level={2}>{Content.title}</Title>
+        <VersionInfo />
         <div className={styles.logoContainer}>
           <GamKenBot className={styles.logo} />
         </div>
