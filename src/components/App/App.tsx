@@ -34,12 +34,10 @@ export const App: FunctionComponent = () => {
   });
   const [consent, setConsent] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     storageService.getConsent().then(setConsent);
     storageService.getIsSearching().then(setSearching);
-    setTimeout(() => setIsLoading(false), 2000);
   }, []);
 
   const setUserConsent = (val: boolean) => {
