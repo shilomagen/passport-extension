@@ -34,10 +34,12 @@ export const App: FunctionComponent = () => {
   });
   const [consent, setConsent] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     storageService.getConsent().then(setConsent);
     storageService.getIsSearching().then(setSearching);
+    setTimeout(() => setIsLoading(false), 2000);
   }, []);
 
   const setUserConsent = (val: boolean) => {
@@ -157,7 +159,12 @@ export const App: FunctionComponent = () => {
       </div>
       <div className={styles.buttonContainer}>
         {searching ? (
-          <Button onClick={stop}>{Content.buttons.stopSearch}</Button>
+          <div>
+          <div className={styles.loading}>
+            <div className={styles.spinner}></div>
+          </div>
+            <Button onClick={stop}>{Content.buttons.stopSearch}</Button>
+          </div>
         ) : (
           <Button onClick={start} disabled={!submitEnabled}>
             {Content.buttons.search}
