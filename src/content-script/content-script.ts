@@ -7,9 +7,6 @@ const gamkenbot = new Gamkenbot();
 
 browser.runtime.onMessage.addListener((message: PlatformMessage) => {
   match(message)
-    .with({ action: ActionTypes.ReportAnalytics }, ({ payload }) => {
-      console.log(payload);
-    })
     .with({ action: ActionTypes.IsLoggedIn }, gamkenbot.setLoggedIn)
     .with({ action: ActionTypes.StartSearch }, gamkenbot.startSearching)
     .with({ action: ActionTypes.StopSearch }, gamkenbot.stopSearching)
