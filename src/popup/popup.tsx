@@ -13,6 +13,7 @@ export const Popup = () => (
     <App />
   </ConfigProvider>
 );
+
 browser.tabs.query({ active: true, currentWindow: true }).then(() => {
   const root = createRoot(document.getElementById('popup') as HTMLElement);
 

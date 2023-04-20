@@ -1,6 +1,6 @@
 .container {
   position: relative;
-  min-height: 400px;
+  min-height: 450px;
   padding: 20px;
   min-width: 500px;
   display: flex;
@@ -32,13 +32,26 @@
   margin-bottom: 20px;
 }
 .logo {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
 }
 
 .buttonContainer {
     display: flex;
     justify-content: center;
+}
+
+.messageContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.warning {
+  color: #f0ad4e
+}
+
+.error {
+  color: #d9534f
 }
 
 .consentContainer {

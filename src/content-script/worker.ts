@@ -1,5 +1,5 @@
 import { HttpService } from '@src/lib/http';
-import { Location, UserVisitSuccessData } from '@src/lib/internal-types';
+import { Location, SearchStatusType, UserVisitSuccessData } from '@src/lib/internal-types';
 import { Handler as GetServiceByLocationHandler } from '@src/content-script/handlers/get-service-by-location/get-service-by-location';
 import { Handler as GetServiceCalendarHandler } from '@src/content-script/handlers/get-service-calendar';
 import { Handler as GetSlotForCalendarHandler } from '@src/content-script/handlers/get-slot-for-calendar/get-slot-for-calendar';
@@ -16,6 +16,8 @@ import {
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 import setRandomInterval, { RandomIntervalClear } from '@src/utils/random-interval';
+import { dispatchSearchStatus } from '../lib/utils/status';
+import { errors as Content } from '@src/content.json'
 
 export interface WorkerConfig {
   locations: Location[];
@@ -49,7 +51,10 @@ export class Worker {
   tick = (config: WorkerConfig): void => {
     if (!this.priorityQueue.isEmpty()) {
       const task = this.priorityQueue.dequeue();
-      this.handle(task, config).catch((err) => console.error(err));
+      this.handle(task, config).catch(err => {
+        dispatchSearchStatus({ type: SearchStatusType.Warning, message: Content.failingRequests })
+        console.error(err)
+      });
     } else {
       this.fillQueue(config.locations);
     }
@@ -58,14 +63,19 @@ export class Worker {
   schedule = (config: WorkerConfig): void => {
     if (!this.slotsQueue.isEmpty()) {
       const task = this.slotsQueue.dequeue();
-      this.handle(task, config).catch((err) => console.error(err));
+      this.handle(task, config)
+        .catch(err => {
+          dispatchSearchStatus({ type: SearchStatusType.Warning, message: Content.failingRequests })
+          console.error(err)
+        });
     }
   };
 
   start = async (config: WorkerConfig): Promise<void> => {
     this.clearFunc = setRandomInterval(() => this.tick(config), 500, 1500);
     this.slotsInterval = setInterval(() => this.schedule(config), 300);
-    await this.storageService.setIsSearching(true);
+
+    await dispatchSearchStatus({type: SearchStatusType.Started})
   };
 
   stop = async (): Promise<void> => {
@@ -79,7 +89,8 @@ export class Worker {
       this.slotsInterval = null;
       this.slotsQueue.clear();
     }
-    await this.storageService.setIsSearching(false);
+
+    await dispatchSearchStatus({type: SearchStatusType.Stopped})
   };
 
   async scheduleAppointment(

@@ -3,8 +3,10 @@ import { StorageService } from '@src/services/storage';
 import { HttpService } from '@src/lib/http';
 import { VisitService } from '@src/lib/visit';
 import differenceInDays from 'date-fns/differenceInDays';
-import { ResponseStatus } from '@src/lib/internal-types';
+import { ResponseStatus, SearchStatusType } from '@src/lib/internal-types';
 import { Locations } from '@src/lib/locations';
+import { dispatchSearchStatus } from '../lib/utils/status';
+import { errors as Content } from '@src/content.json'
 
 export class Gamkenbot {
   constructor(private readonly worker = new Worker(), private readonly storageService = new StorageService()) {}
@@ -27,11 +29,14 @@ export class Gamkenbot {
   };
 
   startSearching = async (): Promise<boolean> => {
+    dispatchSearchStatus({ type: SearchStatusType.Waiting })
+    
     const httpService = new HttpService(this.onRejectError);
     const info = await this.storageService.getUserMetadata();
     const visitService = new VisitService(httpService);
 
     if (!info) {
+      dispatchSearchStatus({ type: SearchStatusType.Error, message: Content.noUserData })
       return false;
     }
 
@@ -51,6 +56,8 @@ export class Gamkenbot {
 
       return true;
     } else {
+      console.log(`Error ${preparedVisit.data.errorCode}`)
+      dispatchSearchStatus({ type: SearchStatusType.Error, message: Content.questionsFailed })
       return false;
     }
   };
