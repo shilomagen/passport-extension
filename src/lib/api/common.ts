@@ -12,8 +12,6 @@ export interface CommonResultsResponse<T> extends CommonResponse {
   Results: T | null;
 }
 
-export interface CommonDataResponse<T> extends CommonResponse{
-  Data: T
+export interface CommonDataResponse<T> extends CommonResponse {
+  Data: T;
 }
-
-

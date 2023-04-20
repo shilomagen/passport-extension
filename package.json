@@ -7,7 +7,8 @@
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack -w --config webpack.dev.js",
     "test": "jest",
-    "lint": "eslint --fix -c ./.eslintrc.js \"src/**/*.ts*\"",
+    "lint": "eslint --quiet -c ./.eslintrc.js \"src/**/*.ts*\"",
+    "lint:fix": "eslint --fix -c ./.eslintrc.js \"src/**/*.ts*\"",
     "prettify": "prettier --write \"src/**/*.ts*\""
   },
   "repository": {

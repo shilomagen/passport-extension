@@ -45,4 +45,4 @@ export interface AppointmentSetResult {
   RecallVisitGetInterval: number;
 }
 
-export type AppointmentSetResponse = CommonResultsResponse<AppointmentSetResult>
+export type AppointmentSetResponse = CommonResultsResponse<AppointmentSetResult>;

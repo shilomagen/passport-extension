@@ -24,5 +24,4 @@ export interface LocationServicesResult {
   ExtRef: string;
   LocationId: number;
 }
-export type LocationServicesResponse = CommonResultsResponse<LocationServicesResult[]>
-
+export type LocationServicesResponse = CommonResultsResponse<LocationServicesResult[]>;
