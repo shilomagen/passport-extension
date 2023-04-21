@@ -1,7 +1,6 @@
 {
   "name": "Gamkenbot",
-  "version": "2.0.0",
-  "description": "Web Extension starter kit built with React, TypeScript, Tailwind CSS, EsLint, Prettier & Webpack",
+  "description": "Gamkenbot is a Chrome extension that automates appointment finding and scheduling on the myVisit website.",
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
@@ -21,7 +20,7 @@
     "extension",
     "boilerplate"
   ],
-  "author": "Alexander Schwartzberg",
+  "author": "Shilo Magen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/shilomagen/passport-extension/issues"
