@@ -7,6 +7,6 @@ export function toAppointment(slot: EnrichedSlot): Appointment {
     hour: DateUtils.timeSinceMidnightToHour(slot.timeSinceMidnight),
     city: slot.city,
     address: slot.address,
-    branchName: slot.branchName
+    branchName: slot.branchName,
   };
 }

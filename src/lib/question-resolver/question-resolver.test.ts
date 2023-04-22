@@ -23,8 +23,7 @@ const MockPrepareVisitData: PrepareVisitData = {
       IsActive: true,
       Title: 'הכנסת מספר טלפון נייד',
       Text: 'אנא הקלד מספר טלפון נייד\nPlease type cellphone No.',
-      Description:
-        'הכנס מספר נייד עם תחילית 05\nEnter cellphone No. begins with 05.',
+      Description: 'הכנס מספר נייד עם תחילית 05\nEnter cellphone No. begins with 05.',
       CustomErrorText: 'הקלד ספרות בלבד',
       Type: 0,
       MappedTo: 3,
@@ -73,9 +72,7 @@ describe('[Question Resolver]', () => {
         ],
       },
     };
-    expect(QuestionResolver.hasErrors(prepareVisitDataWithPhoneError)).toBe(
-      ErrorCode.PhoneNumberNotValid,
-    );
+    expect(QuestionResolver.hasErrors(prepareVisitDataWithPhoneError)).toBe(ErrorCode.PhoneNumberNotValid);
   });
 
   test('should return id error code', () => {
@@ -90,9 +87,7 @@ describe('[Question Resolver]', () => {
         ],
       },
     };
-    expect(QuestionResolver.hasErrors(prepareVisitDataWithIdError)).toBe(
-      ErrorCode.IdNotValid,
-    );
+    expect(QuestionResolver.hasErrors(prepareVisitDataWithIdError)).toBe(ErrorCode.IdNotValid);
   });
 
   test('should return general error code if we cant find an error', () => {
@@ -107,8 +102,6 @@ describe('[Question Resolver]', () => {
         ],
       },
     };
-    expect(QuestionResolver.hasErrors(prepareVisitDataWithUnknownError)).toBe(
-      ErrorCode.General,
-    );
+    expect(QuestionResolver.hasErrors(prepareVisitDataWithUnknownError)).toBe(ErrorCode.General);
   });
 });
