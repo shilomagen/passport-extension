@@ -15,7 +15,8 @@
     "search": "חפשו לי תור",
     "login": "התחברו",
     "loggedIn": "אתם מחוברים!",
-    "stopSearch": "עצור"
+    "stopSearch": "עצור",
+    "waiting": "מאתחל..."
   },
   "statuses": {
     "connected": "מחובר",
@@ -39,5 +40,12 @@
   "results": {
     "userHasAppointment": "לא ניתן לקבוע תור כי כבר קיים תור פעיל",
     "scheduledSuccessfully": "התור נקבע בהצלחה"
+  },
+  "errors": {
+    "noUserData": "אין מספיק נתונים. ודאו שהזנתם את כל הפרטים",
+    "questionsFailed": "לא הצלחתי להתחבר לשירות חידוש הדרכון :(",
+    "failingRequests": "חלק מהניסיונות נכשלים או נחסמים, אבל אני עדיין מנסה...",
+    "authError": "נראה שאתם כבר לא מחוברים. נסו להתחבר שוב",
+    "retryingSetAppointment": "נמצא תאריך מתאים, עדיין מנסה לתפוס אותו..."
   }
 }

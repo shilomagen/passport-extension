@@ -41,9 +41,13 @@ export class AppointmentScheduler {
       preparedVisitId: visitId,
     };
 
-    const response = await this.httpService.setAppointment(visitToken, setAppointmentRequest);
-    return response?.Success
-      ? aSuccessResponse(response.Results!)
-      : aFailedResponse(AppointmentScheduler.resolveError(response!));
+    try {
+      const response = await this.httpService.setAppointment(visitToken, setAppointmentRequest);
+      return response?.Success
+        ? aSuccessResponse(response.Results!)
+        : aFailedResponse(AppointmentScheduler.resolveError(response!));
+    } catch (err) {
+      return aFailedResponse(ErrorCode.General);
+    }
   }
 }

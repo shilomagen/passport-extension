@@ -10,5 +10,6 @@ browser.runtime.onMessage.addListener((message: PlatformMessage) => {
     .with({ action: ActionTypes.IsLoggedIn }, gamkenbot.setLoggedIn)
     .with({ action: ActionTypes.StartSearch }, gamkenbot.startSearching)
     .with({ action: ActionTypes.StopSearch }, gamkenbot.stopSearching)
+    .with({ action: ActionTypes.SetSearchStatus }, () => null)
     .exhaustive();
 });

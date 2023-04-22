@@ -79,6 +79,19 @@ export interface ResponseFailed {
   };
 }
 
+export enum SearchStatusType {
+  Waiting = 'SEARCH_WAITING',
+  Started = 'SEARCH_STARTED',
+  Warning = 'SEARCH_WARNING',
+  Error = 'SEARCH_ERROR',
+  Stopped = 'SEARCH_STOPPED',
+}
+
+export interface SearchStatus {
+  type: SearchStatusType;
+  message?: string;
+}
+
 export type ResponseWrapper<T> = ResponseSuccess<T> | ResponseFailed;
 
 export type UserVisitResponse = ResponseWrapper<UserVisitSuccessData>;

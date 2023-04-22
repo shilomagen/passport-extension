@@ -10,4 +10,8 @@ export class MessagingTestkit {
   addListener = (listener: (...args: any[]) => void): void => {
     this.listeners.push(listener);
   };
+
+  removeListener = (listener: (...args: any[]) => void): void => {
+    this.listeners.splice(this.listeners.indexOf(listener), 1);
+  };
 }

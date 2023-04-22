@@ -14,18 +14,25 @@ const browser: any = {
       return Promise.resolve({ done: true });
     },
     query(params: any): Promise<Tab[]> {
-      return Promise.resolve([]);
+      return Promise.resolve([{ id: 123 }]);
     },
+    sendMessage: (tabId: number, message: any) => messagingTestkit.sendMessage(message),
   },
   runtime: {
     sendMessage: messagingTestkit.sendMessage,
     onMessage: {
       addListener: messagingTestkit.addListener,
+      removeListener: messagingTestkit.removeListener,
+    },
+    onInstalled: {
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
     },
   },
   storage: {
     onChanged: {
       addListener: jest.fn(),
+      removeListener: jest.fn(),
     },
     local: new LocalStorageTestkit(),
   },
