@@ -1,17 +1,25 @@
+import { AxiosError } from 'axios';
 import { Worker, WorkerConfig } from '@src/content-script/worker';
 import { StorageService } from '@src/services/storage';
 import { HttpService } from '@src/lib/http';
 import { VisitService } from '@src/lib/visit';
 import differenceInDays from 'date-fns/differenceInDays';
-import { ResponseStatus } from '@src/lib/internal-types';
+import { ResponseStatus, SearchStatusType } from '@src/lib/internal-types';
 import { Locations } from '@src/lib/locations';
+import { dispatchSearchStatus } from '../lib/utils/status';
+import { errors as Content } from '@src/content.json'
 
 export class Gamkenbot {
   constructor(private readonly worker = new Worker(), private readonly storageService = new StorageService()) {}
 
-  onRejectError = async () => {
-    await this.worker.stop();
-    await this.storageService.setLoggedIn(false);
+  onRejectError = async (error: AxiosError) => {
+    const status = error?.response?.status;
+    if (status === 401 || status === 403) {
+      await this.worker.stop({type: SearchStatusType.Error, message: Content.authError});
+      await this.storageService.setLoggedIn(false);
+    } else {
+      dispatchSearchStatus({type: SearchStatusType.Warning, message: Content.failingRequests})
+    }
   };
 
   setLoggedIn = async (): Promise<boolean> => {
@@ -27,32 +35,42 @@ export class Gamkenbot {
   };
 
   startSearching = async (): Promise<boolean> => {
+    dispatchSearchStatus({ type: SearchStatusType.Waiting })
+    
     const httpService = new HttpService(this.onRejectError);
     const info = await this.storageService.getUserMetadata();
     const visitService = new VisitService(httpService);
 
     if (!info) {
+      dispatchSearchStatus({ type: SearchStatusType.Error, message: Content.noUserData })
       return false;
     }
 
     const daysDiff = differenceInDays(new Date(info.lastDate), new Date());
-    const preparedVisit = await visitService.prepare(info);
-
-    if (preparedVisit.status === ResponseStatus.Success) {
-      httpService.updateVisitToken(preparedVisit.data.visitToken);
-      const locations = Locations.filter((location) => info.cities.includes(location.city));
-      const config: WorkerConfig = {
-        locations,
-        userVisit: preparedVisit.data,
-        maxDaysUntilAppointment: daysDiff,
-        httpService: httpService,
-      };
-      await this.worker.start(config);
-
-      return true;
-    } else {
-      return false;
+    
+    try {
+      const preparedVisit = await visitService.prepare(info);
+      if (preparedVisit.status === ResponseStatus.Success) {
+        httpService.updateVisitToken(preparedVisit.data.visitToken);
+        const locations = Locations.filter((location) => info.cities.includes(location.city));
+        const config: WorkerConfig = {
+          locations,
+          userVisit: preparedVisit.data,
+          maxDaysUntilAppointment: daysDiff,
+          httpService: httpService,
+        };
+        await this.worker.start(config);
+  
+        return true;
+      } else {
+        throw new Error(`Error code ${preparedVisit.data.errorCode}`)
+      }
+    } catch(err) {
+        console.error(err)
+        dispatchSearchStatus({ type: SearchStatusType.Error, message: Content.questionsFailed })
+        return false;
     }
+    
   };
 
   stopSearching = async (): Promise<boolean> => {

@@ -1,5 +1,5 @@
 import { HttpService } from '@src/lib/http';
-import { Location, UserVisitSuccessData } from '@src/lib/internal-types';
+import { Location, SearchStatus, SearchStatusType, UserVisitSuccessData } from '@src/lib/internal-types';
 import { Handler as GetServiceByLocationHandler } from '@src/content-script/handlers/get-service-by-location/get-service-by-location';
 import { Handler as GetServiceCalendarHandler } from '@src/content-script/handlers/get-service-calendar';
 import { Handler as GetSlotForCalendarHandler } from '@src/content-script/handlers/get-slot-for-calendar/get-slot-for-calendar';
@@ -16,6 +16,7 @@ import {
 import { BaseParams } from '@src/content-script/handlers';
 import { StorageService } from '@src/services/storage';
 import setRandomInterval, { RandomIntervalClear } from '@src/utils/random-interval';
+import { dispatchSearchStatus } from '../lib/utils/status';
 
 export interface WorkerConfig {
   locations: Location[];
@@ -65,21 +66,23 @@ export class Worker {
   start = async (config: WorkerConfig): Promise<void> => {
     this.clearFunc = setRandomInterval(() => this.tick(config), 500, 1500);
     this.slotsInterval = setInterval(() => this.schedule(config), 300);
-    await this.storageService.setIsSearching(true);
+    await dispatchSearchStatus({type: SearchStatusType.Started})
   };
 
-  stop = async (): Promise<void> => {
+  stop = async (status: SearchStatus = {type: SearchStatusType.Stopped}): Promise<void> => {
     if (this.clearFunc) {
       this.clearFunc.clear();
       this.clearFunc = null;
       this.priorityQueue.clear();
     }
+
     if (this.slotsInterval) {
       clearInterval(this.slotsInterval);
       this.slotsInterval = null;
       this.slotsQueue.clear();
     }
-    await this.storageService.setIsSearching(false);
+
+    await dispatchSearchStatus(status)
   };
 
   async scheduleAppointment(
@@ -92,10 +95,12 @@ export class Worker {
       const scheduleAppointment = new Scheduler(params, userVisit);
       const res = await scheduleAppointment.handle(task);
       if (res.isDone) {
-        await this.stop();
-      } else {
-        this.settingAppointment = false;
+        await this.stop(res.status);
+      } else if (res.status) {
+        dispatchSearchStatus(res.status)
       }
+      
+      this.settingAppointment = false;
     } else {
       this.priorityQueue.enqueue(task);
     }

@@ -35,6 +35,7 @@
     "@svgr/webpack": "^6.5.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/chrome": "^0.0.124",
     "@types/jest": "^29.5.0",
     "@types/lodash.debounce": "^4.0.7",

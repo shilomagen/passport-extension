@@ -1,13 +1,16 @@
+import { SearchStatus } from "./lib/internal-types";
+
 export enum ActionTypes {
   IsLoggedIn = 'IS_LOGGED_IN',
   StartSearch = 'START_SEARCH',
   StopSearch = 'STOP_SEARCH',
-  ReportAnalytics = 'REPORT_ANALYTICS',
+  SetSearchStatus = 'SET_SEARCH_STATUS',
 }
 
 interface IsLoggedInMessage {
   action: ActionTypes.IsLoggedIn;
 }
+
 interface StartSearchMessage {
   action: ActionTypes.StartSearch;
 }
@@ -15,4 +18,10 @@ interface StartSearchMessage {
 interface StopSearchMessage {
   action: ActionTypes.StopSearch;
 }
-export type PlatformMessage = IsLoggedInMessage | StartSearchMessage | StopSearchMessage;
+
+interface SearchStatusMessage {
+  action: ActionTypes.SetSearchStatus
+  status: SearchStatus
+}
+
+export type PlatformMessage = IsLoggedInMessage | StartSearchMessage | StopSearchMessage | SearchStatusMessage

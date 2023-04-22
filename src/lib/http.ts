@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosError, AxiosInstance } from 'axios';
 import { ServiceIds } from './constants';
 import {
   AnswerQuestionRequest,
@@ -14,7 +14,7 @@ import {
   SearchAvailableSlotsResponse,
 } from './api';
 import { DateUtils } from './utils';
-import { EnrichedService, Service } from './internal-types';
+import { EnrichedService, SearchStatusType, Service } from './internal-types';
 import { toService } from './mappers';
 import { GetUserInfoResponse } from '@src/lib/api/user-info';
 
@@ -48,7 +48,7 @@ export const Urls = {
 export class HttpService {
   private readonly httpClient: AxiosInstance;
 
-  constructor(onAuthError: () => Promise<void>) {
+  constructor(errorHandler: (err: AxiosError) => Promise<void>) {
     this.httpClient = axios.create({
       headers: {
         // MyVisit default configuration
@@ -58,21 +58,20 @@ export class HttpService {
       },
       withCredentials: true,
     });
-    this.addRejectInterceptor(onAuthError);
+    
+    this.addRejectInterceptor(errorHandler);
   }
 
   public updateVisitToken = (visitToken: string) => {
     this.httpClient.defaults.headers['Preparedvisittoken'] = visitToken;
   };
 
-  public addRejectInterceptor = (func: () => Promise<void>) => {
+  public addRejectInterceptor = (errorHandler: (err: AxiosError) => Promise<void>) => {
     this.httpClient.interceptors.response.use(
-      (res) => res,
-      async (error) => {
-        const status = error?.response?.status;
-        if (status === 401 || status === 403) {
-          await func();
-        }
+      res => res,
+      async (error: AxiosError) => {
+        await errorHandler(error)
+        return Promise.reject(error)
       },
     );
   };

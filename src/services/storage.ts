@@ -1,6 +1,6 @@
-import browser from 'webextension-polyfill';
+import browser, { Search } from 'webextension-polyfill';
 import { v4 as uuid } from 'uuid';
-import { Service } from '@src/lib/internal-types';
+import { SearchStatus, SearchStatusType, Service } from '@src/lib/internal-types';
 
 export interface UserMetadata {
   id: string;
@@ -9,10 +9,11 @@ export interface UserMetadata {
   lastDate: number;
 }
 
+const LAST_EXTENSION_VERSION_KEY = 'lastVersion'
 const USER_METADATA_KEY = 'userMetadata';
 const USER_LOGGED_IN = 'userLoggedIn';
 const USER_CONSENT = 'userConsent';
-const USER_SEARCHING = 'userSearching';
+const USER_SEARCH_STATUS = 'userSearchStatus';
 const USER_ID = 'userId';
 
 export const LOCATION_PREFIX = 'location_';
@@ -21,6 +22,15 @@ export const HOUR = 1000 * 60 * 60;
 export const DAY = HOUR * 24;
 
 export class StorageService {
+  getLastExtensionVersion(): Promise<string | null> {
+    return browser.storage.local.get(LAST_EXTENSION_VERSION_KEY)
+      .then((res) => res[LAST_EXTENSION_VERSION_KEY] ?? null);
+  }
+  
+  updateLastExtensionVersion(): Promise<void> {
+    return browser.storage.local.set({ [LAST_EXTENSION_VERSION_KEY]: browser.runtime.getManifest().version })
+  }
+
   setUserMetadata(metadata: UserMetadata): Promise<void> {
     return browser.storage.local.set({ [USER_METADATA_KEY]: metadata });
   }
@@ -41,19 +51,32 @@ export class StorageService {
   async getLoggedIn(): Promise<boolean> {
     const maybeLoggedIn = await browser.storage.local.get(USER_LOGGED_IN);
     if (maybeLoggedIn[USER_LOGGED_IN]) {
-      const { loggedIn, expiry } = maybeLoggedIn[USER_LOGGED_IN];
-      return expiry > Date.now() ? loggedIn : browser.storage.local.remove(USER_LOGGED_IN).then(() => false);
+      return this.getLoggedInResult(maybeLoggedIn[USER_LOGGED_IN])
     } else {
       return false;
     }
   }
 
-  onLoggedInChange(callback: (loggedIn: boolean) => void): void {
-    browser.storage.onChanged.addListener((changes) => {
+  private async getLoggedInResult(entry: {loggedIn: boolean, expiry: number}): Promise<boolean> {
+    const { loggedIn, expiry } = entry
+    
+    return expiry > Date.now()
+      ? loggedIn
+      : browser.storage.local.remove(USER_LOGGED_IN)
+        .then(() => false);
+  }
+
+  onLoggedInChange(callback: (loggedIn: boolean) => void): () => void {
+    const listener = async (changes: Record<string, browser.Storage.StorageChange>) => {
       if (changes[USER_LOGGED_IN]) {
-        callback(changes[USER_LOGGED_IN].newValue);
+        const result = await this.getLoggedInResult(changes[USER_LOGGED_IN].newValue)
+        callback(result);
       }
-    });
+    }
+
+    browser.storage.onChanged.addListener(listener);
+
+    return () => browser.storage.onChanged.removeListener(listener)
   }
 
   getConsent(): Promise<boolean> {
@@ -64,12 +87,14 @@ export class StorageService {
     return browser.storage.local.set({ [USER_CONSENT]: consent });
   }
 
-  setIsSearching(isSearching: boolean): Promise<void> {
-    return browser.storage.local.set({ [USER_SEARCHING]: isSearching });
+  setSearchStatus(status: SearchStatus): Promise<void> {
+    return browser.storage.local.set({ [USER_SEARCH_STATUS]: status });
   }
 
-  getIsSearching(): Promise<boolean> {
-    return browser.storage.local.get(USER_SEARCHING).then((res) => res[USER_SEARCHING] ?? false);
+  getSearchStatus(): Promise<SearchStatus> {
+    const defaultStatus: SearchStatus = {type: SearchStatusType.Stopped}
+
+    return browser.storage.local.get(USER_SEARCH_STATUS).then((res) => res[USER_SEARCH_STATUS] ?? defaultStatus);
   }
 
   async getUserId(): Promise<string> {
