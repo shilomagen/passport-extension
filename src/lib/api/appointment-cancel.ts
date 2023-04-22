@@ -43,4 +43,4 @@ interface AppointmentCancelResult {
   RecallVisitGetInterval: number;
 }
 
-export type AppointmentCancelResponse = CommonResultsResponse<AppointmentCancelResult>
+export type AppointmentCancelResponse = CommonResultsResponse<AppointmentCancelResult>;
