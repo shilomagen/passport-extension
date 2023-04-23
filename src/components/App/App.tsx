@@ -7,11 +7,16 @@ import { Locations } from '@src/lib/locations';
 import styles from './App.scss';
 import debounce from 'lodash.debounce';
 import browser, { Tabs } from 'webextension-polyfill';
-import { ActionTypes, ReportAnalyticsMessage } from '@src/platform-message';
 import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
 import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
+import {
+  validateIsraeliIdNumber,
+  validateNumberOfAllowedCities,
+  validatePhoneNumber,
+} from '@src/validators/validators';
+import { ActionTypes } from '@src/platform-message';
 import { AnalyticsEventType } from '@src/services/analytics';
 
 import Tab = Tabs.Tab;
@@ -45,7 +50,14 @@ export const App: FunctionComponent = () => {
 
   const { id, phone, cities, startDate, endDate } = userMetadata;
 
-  const submitEnabled = id && phone && cities.length > 0 && consent && startDate > 0 && endDate > 0;
+  const submitEnabled =
+    validateIsraeliIdNumber(id) &&
+    validatePhoneNumber(phone) &&
+    cities.length > 0 &&
+    cities.length <= 4 &&
+    consent &&
+    startDate > 0 &&
+    endDate > 0;
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
@@ -86,10 +98,6 @@ export const App: FunctionComponent = () => {
     const maybeMyVisitTab = await getMyVisitTab();
     if (maybeMyVisitTab) {
       await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StartSearch });
-      await browser.tabs.sendMessage(maybeMyVisitTab.id!, {
-        action: ActionTypes.ReportAnalytics,
-        payload: { type: AnalyticsEventType.StartSearch, payload: { cities: cities.join(',') } },
-      } as ReportAnalyticsMessage);
       setSearching(true);
     }
   };
@@ -117,6 +125,7 @@ export const App: FunctionComponent = () => {
         name="id"
         value={userMetadata.id}
         placeholder={Content.id.placeholder}
+        status={validateIsraeliIdNumber(userMetadata.id) ? '' : 'error'}
         onChange={(e) => setMetadata('id')(e.target.value)}
       />
       <Input
@@ -125,6 +134,7 @@ export const App: FunctionComponent = () => {
         name="phone"
         value={userMetadata.phone}
         placeholder={Content.phone.placeholder}
+        status={validatePhoneNumber(userMetadata.phone) ? '' : 'error'}
         onChange={(e) => setMetadata('phone')(e.target.value)}
       />
       <Text>{Content.maxCitiesText}</Text>
@@ -135,6 +145,7 @@ export const App: FunctionComponent = () => {
         onChange={setMetadata('cities')}
         mode="multiple"
         listHeight={200}
+        status={validateNumberOfAllowedCities(userMetadata.cities) ? 'error' : ''}
         className={styles.selectContainer}
       />
       <DateRangePicker userMetadata={userMetadata} onDateChange={onDateChange} />

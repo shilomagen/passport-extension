@@ -10,12 +10,8 @@ import { ServiceIds } from '@src/lib/constants';
 import { StorageService } from '@src/services/storage';
 import browser from 'webextension-polyfill';
 import { LocalStorageTestkit } from '@test/testkits/storage.testkit';
-import { Analytics } from '@src/services/analytics';
 import { BaseParams } from '@src/content-script/handlers';
-import { MixpanelTestkit } from './testkits/mixpanel.testkit';
-import Mixpanel from 'mixpanel-browser';
 
-const mixpanelTestkit: jest.Mocked<MixpanelTestkit> = Mixpanel as any;
 const storageTestkit = browser.storage.local as unknown as LocalStorageTestkit;
 
 export class HandlersDriver {
@@ -24,7 +20,6 @@ export class HandlersDriver {
     slotsQueue: new PriorityQueue(),
     httpService: new HttpService(() => Promise.resolve()),
     storage: new StorageService(),
-    analytics: new Analytics(),
   };
 
   private getSlotForCalendarHandler = new GetSlotForCalendar(this.baseParams);
@@ -68,13 +63,11 @@ export class HandlersDriver {
     queueTasks: () => this.baseParams.priorityQueue.toArray(),
     slotsQueue: () => this.baseParams.slotsQueue.toArray(),
     storageValue: (key: string) => storageTestkit.get(key),
-    analyticsReports: () => mixpanelTestkit.getReports(),
   };
 
   reset = () => {
     nock.cleanAll();
     storageTestkit.clear();
     this.baseParams.priorityQueue.clear();
-    mixpanelTestkit.reset();
   };
 }

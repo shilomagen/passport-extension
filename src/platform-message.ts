@@ -1,15 +1,8 @@
-import { AnalyticsEvent } from '@src/services/analytics';
-
 export enum ActionTypes {
   IsLoggedIn = 'IS_LOGGED_IN',
   StartSearch = 'START_SEARCH',
   StopSearch = 'STOP_SEARCH',
   ReportAnalytics = 'REPORT_ANALYTICS',
-}
-
-export interface ReportAnalyticsMessage {
-  action: ActionTypes.ReportAnalytics;
-  payload: AnalyticsEvent;
 }
 
 interface IsLoggedInMessage {
@@ -22,4 +15,4 @@ interface StartSearchMessage {
 interface StopSearchMessage {
   action: ActionTypes.StopSearch;
 }
-export type PlatformMessage = ReportAnalyticsMessage | IsLoggedInMessage | StartSearchMessage | StopSearchMessage;
+export type PlatformMessage = IsLoggedInMessage | StartSearchMessage | StopSearchMessage;

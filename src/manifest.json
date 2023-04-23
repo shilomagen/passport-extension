@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Gamkenbot",
   "description": "Gamkenbot will help you get an appointment at the Ministry of Interior",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "action": {
     "default_icon": {
       "16": "assets/icon-16.png",

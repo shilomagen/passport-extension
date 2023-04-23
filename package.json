@@ -1,13 +1,14 @@
 {
-  "name": "Gamkenbot",
+  "name": "gamkenbot",
   "version": "2.0.0",
   "description": "Web Extension starter kit built with React, TypeScript, Tailwind CSS, EsLint, Prettier & Webpack",
-  "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack -w --config webpack.dev.js",
     "test": "jest",
-    "lint": "eslint --fix -c ./.eslintrc.js \"src/**/*.ts*\"",
+    "lint:check": "eslint -c ./.eslintrc.js \"src/**/*.ts*\"",
+    "lint": "npm run lint:check -- --fix",
+    "prettify:check": "prettier \"src/**/*.ts*\"",
     "prettify": "prettier --write \"src/**/*.ts*\""
   },
   "repository": {
@@ -21,7 +22,7 @@
     "extension",
     "boilerplate"
   ],
-  "author": "Alexander Schwartzberg",
+  "author": "Shilo Magen",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/shilomagen/passport-extension/issues"
@@ -38,7 +39,6 @@
     "@types/jest": "^29.5.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.merge": "^4.6.7",
-    "@types/mixpanel-browser": "^2.38.1",
     "@types/node": "^14.11.8",
     "@types/react": "^18.0.2",
     "@types/react-dom": "^18.0.2",
@@ -88,7 +88,6 @@
     "dayjs": "^1.11.7",
     "interval-plus": "^1.0.2",
     "lodash.debounce": "^4.0.8",
-    "mixpanel-browser": "^2.46.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "stylis": "^4.1.3",

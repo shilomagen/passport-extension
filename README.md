@@ -45,7 +45,7 @@ npm run build
 
 ### Gamkenbot Extension
 
-#### Popup `src/popup/popup.tsx
+#### Popup `src/popup/popup.tsx`
 
 In Chrome extension development, a "popup" is a small window that appears when a user clicks on the
 extension icon in the browser toolbar. The popup can display information or provide functionality
