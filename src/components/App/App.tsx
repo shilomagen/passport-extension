@@ -19,8 +19,6 @@ import {
 import { ActionTypes } from '@src/platform-message';
 
 import Tab = Tabs.Tab;
-import subDays from 'date-fns/subDays';
-
 const { Title, Text } = Typography;
 
 const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).map((value) => ({ value }));
@@ -63,13 +61,6 @@ export const App: FunctionComponent = () => {
 
   const initializeMetadata = (metadata: UserMetadata) => {
     const { cities, phone, id, startDate, endDate } = metadata;
-    // Verify start date and end date are not in the past
-    if (startDate.st && startDate.startOf('day').isBefore(startOfTodayDate)) {
-      onDateChange(today, DateOptions.START_DATE);
-    }
-    if (endDate && endDate.startOf('day').isBefore(startOfTodayDate)) {
-      onDateChange(today, DateOptions.END_DATE);
-    }
     setUserMetadata({ cities, phone, id, startDate, endDate });
   };
 
