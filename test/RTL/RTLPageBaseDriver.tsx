@@ -9,7 +9,6 @@ export class PageBaseDriver {
   public dateRangePickerDriver!: RTLDateRangePickerDriver;
 
   async mount() {
-    window.localStorage.clear();
     this.renderResult = render(<App />);
     await waitFor(() => this.get.title());
     this.dateRangePickerDriver = new RTLDateRangePickerDriver(this.renderResult);

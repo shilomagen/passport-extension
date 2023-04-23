@@ -28,11 +28,10 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
   useEffect(() => {
     // Verify that both start and end dates are set to a date on or after today
     if (startDate && startDate.startOf('day').isBefore(startOfTodayDate)) {
-      onDateChange(new Date(), DateOptions.START_DATE);
+      onDateChange(DateUtils.getDefaultStartDate(), DateOptions.START_DATE);
     }
-
     if (endDate && endDate.startOf('day').isBefore(startOfTodayDate)) {
-      onDateChange(addDays(new Date(), 14), DateOptions.END_DATE);
+      onDateChange(DateUtils.getDefaultEndDate(), DateOptions.END_DATE);
     }
   }, [userMetadata]);
 

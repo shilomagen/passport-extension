@@ -19,6 +19,8 @@ import {
 import { ActionTypes } from '@src/platform-message';
 
 import Tab = Tabs.Tab;
+import { DateUtils } from '@src/lib/utils';
+
 const { Title, Text } = Typography;
 
 const ALL_CITIES = Array.from(new Set(Locations.map((location) => location.city))).map((value) => ({ value }));
@@ -30,8 +32,8 @@ export const App: FunctionComponent = () => {
     phone: '',
     cities: [],
     id: '',
-    startDate: new Date().getTime(),
-    endDate: addDays(new Date(), 14).getTime(),
+    startDate: DateUtils.getDefaultStartDate().getTime(),
+    endDate: DateUtils.getDefaultEndDate().getTime(),
   });
   const [consent, setConsent] = useState(false);
   const [searching, setSearching] = useState(false);

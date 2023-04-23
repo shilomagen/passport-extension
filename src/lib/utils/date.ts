@@ -1,4 +1,5 @@
 import format from 'date-fns/format';
+import addDays from 'date-fns/addDays';
 
 const ApiDateFormat = 'yyyy-MM-dd';
 export const IsraelDateFormat = 'dd-MM-yyyy';
@@ -16,4 +17,6 @@ export const DateUtils = {
     `${padIfNeeded(Math.floor(timeSinceMidnight / 60))}:${padIfNeeded(timeSinceMidnight % 60)}`,
   toApiFormattedDate: (date: string | number) => format(new Date(date), ApiDateFormat),
   toIsraelFormattedDate: (date: string | number) => format(new Date(date), IsraelDateFormat),
+  getDefaultStartDate: () => new Date(),
+  getDefaultEndDate: () => addDays(new Date(), 14),
 };
