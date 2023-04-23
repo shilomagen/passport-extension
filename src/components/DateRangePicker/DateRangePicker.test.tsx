@@ -75,15 +75,13 @@ describe('Date Range Picker', () => {
     });
 
     it('should not allow choosing a end date that is in the past', async () => {
-      const endDate = driver.dateRangePickerDriver.get.endDateValue();
-      expect(endDate).toEqual(defaultEndDate);
+      expect(driver.dateRangePickerDriver.get.endDateValue()).toEqual(defaultEndDate);
 
       // Try to select a disabled date
       driver.dateRangePickerDriver.set.endDate(yesterdayDate);
 
       // end date should not change
-      const currentEndDate = driver.dateRangePickerDriver.get.endDateValue();
-      expect(currentEndDate).toBe(defaultEndDate);
+      expect(driver.dateRangePickerDriver.get.endDateValue()).toBe(defaultEndDate);
     });
   });
 });
