@@ -1,14 +1,16 @@
 import React from 'react';
-import moment from 'moment/moment';
-import { IsraelDateDigitsFormat } from '@src/lib/utils';
+import { IsraelDateFormat } from '@src/lib/utils';
 import { PageBaseDriver } from '@test/RTL/RTLPageBaseDriver';
+import subDays from 'date-fns/subDays';
+import addDays from 'date-fns/addDays';
+import format from 'date-fns/format';
 
 describe('Date Range Picker', () => {
   const driver = new PageBaseDriver();
-  const yesterdayDate = moment().subtract(1, 'days').format(IsraelDateDigitsFormat);
-  const todayDate = moment().format(IsraelDateDigitsFormat);
-  const tomorrowDate = moment().add(1, 'days').format(IsraelDateDigitsFormat);
-  const defaultEndDate = moment().add(14, 'days').format(IsraelDateDigitsFormat);
+  const yesterdayDate = format(subDays(new Date(), 1), IsraelDateFormat);
+  const todayDate = format(new Date(), IsraelDateFormat);
+  const tomorrowDate = format(addDays(new Date(), 1), IsraelDateFormat);
+  const defaultEndDate = format(addDays(new Date(), 14), IsraelDateFormat);
 
   beforeEach(() => driver.mount());
 
@@ -38,7 +40,7 @@ describe('Date Range Picker', () => {
       const endDate = driver.dateRangePickerDriver.get.endDateValue();
       expect(endDate).toEqual(defaultEndDate);
 
-      const newEndDate = moment().add(7, 'days').format(IsraelDateDigitsFormat);
+      const newEndDate = format(addDays(new Date(), 7), IsraelDateFormat);
       driver.dateRangePickerDriver.set.endDate(newEndDate);
 
       const updatedEndDate = driver.dateRangePickerDriver.get.endDateValue();
@@ -63,10 +65,7 @@ describe('Date Range Picker', () => {
       const startDate = driver.dateRangePickerDriver.get.startDateValue();
       expect(startDate).toEqual(todayDate);
 
-      const dateAfterEndDate = moment(defaultEndDate, IsraelDateDigitsFormat)
-        .add(5, 'days')
-        .format(IsraelDateDigitsFormat);
-
+      const dateAfterEndDate = format(addDays(new Date(), 16), IsraelDateFormat);
       // Try to select a disabled date
       driver.dateRangePickerDriver.set.startDate(dateAfterEndDate);
 

@@ -1,8 +1,7 @@
 import format from 'date-fns/format';
 
 const ApiDateFormat = 'yyyy-MM-dd';
-const IsraelDateFormat = 'dd-MM-yyyy';
-export const IsraelDateDigitsFormat = 'DD-MM-YYYY';
+export const IsraelDateFormat = 'dd-MM-yyyy';
 
 const padIfNeeded = (digit: number) => (`${digit}`.length === 1 ? `0${digit}` : `${digit}`);
 
@@ -11,6 +10,7 @@ export const DateUtils = {
     const dateFormat = new Date(date);
     return dateFormat >= startDate && dateFormat <= endDate;
   },
+  isEqual: (currentDate: Date, compareDate: Date): boolean => currentDate == compareDate,
   isBefore: (currentDate: Date, compareDate: Date): boolean => currentDate < compareDate,
   isAfter: (currentDate: Date, compareDate: Date): boolean => currentDate > compareDate,
   timeSinceMidnightToHour: (timeSinceMidnight: number): string =>
