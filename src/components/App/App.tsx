@@ -17,9 +17,9 @@ import {
   validatePhoneNumber,
 } from '@src/validators/validators';
 import { ActionTypes } from '@src/platform-message';
-import { AnalyticsEventType } from '@src/services/analytics';
 
 import Tab = Tabs.Tab;
+import subDays from 'date-fns/subDays';
 
 const { Title, Text } = Typography;
 
@@ -58,10 +58,18 @@ export const App: FunctionComponent = () => {
     consent &&
     startDate > 0 &&
     endDate > 0;
+
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
     const { cities, phone, id, startDate, endDate } = metadata;
+    // Verify start date and end date are not in the past
+    if (startDate.st && startDate.startOf('day').isBefore(startOfTodayDate)) {
+      onDateChange(today, DateOptions.START_DATE);
+    }
+    if (endDate && endDate.startOf('day').isBefore(startOfTodayDate)) {
+      onDateChange(today, DateOptions.END_DATE);
+    }
     setUserMetadata({ cities, phone, id, startDate, endDate });
   };
 

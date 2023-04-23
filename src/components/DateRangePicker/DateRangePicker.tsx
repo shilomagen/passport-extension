@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useEffect } from 'react';
 import parse from 'date-fns/parse';
 import { UserMetadata } from '@src/services/storage';
 import Content from '@src/content.json';
@@ -8,6 +8,7 @@ import dayjs, { Dayjs } from 'dayjs';
 const { Text } = Typography;
 import { DateUtils, IsraelDateFormat } from '@src/lib/utils/date';
 import { DateRangePickerTestIds } from '@src/components/dataTestIds';
+import addDays from 'date-fns/addDays';
 
 export enum DateOptions {
   START_DATE = 'startDate',
@@ -22,13 +23,24 @@ interface IDateRangePickerProps {
 export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDateChange, userMetadata }) => {
   const startDate = userMetadata.startDate ? dayjs(userMetadata.startDate) : undefined;
   const endDate = userMetadata.endDate ? dayjs(userMetadata.endDate) : undefined;
+  const startOfTodayDate = dayjs(new Date()).startOf('day');
+
+  useEffect(() => {
+    // Verify that both start and end dates are set to a date on or after today
+    if (startDate && startDate.startOf('day').isBefore(startOfTodayDate)) {
+      onDateChange(new Date(), DateOptions.START_DATE);
+    }
+
+    if (endDate && endDate.startOf('day').isBefore(startOfTodayDate)) {
+      onDateChange(addDays(new Date(), 14), DateOptions.END_DATE);
+    }
+  }, [userMetadata]);
 
   const shouldDisabledDates = (currentDate: Dayjs, dateOption: DateOptions): boolean => {
     // Start Date - Disable all dates before today's date or before the chosen first date for appointment
     // End Date - Disable all dates before today's date or after the chosen last date for appointment
-    const startOfTodayDate = dayjs(new Date()).startOf('day').toDate();
     const startOfCurrentDate = currentDate.startOf('day').toDate();
-    const isBeforeToday = DateUtils.isBefore(startOfCurrentDate, startOfTodayDate);
+    const isBeforeToday = DateUtils.isBefore(startOfCurrentDate, startOfTodayDate.toDate());
     const isAfterEndDate = !!endDate && DateUtils.isAfter(startOfCurrentDate, endDate.startOf('day').toDate());
     const isBeforeStartDate = !!startDate && DateUtils.isBefore(startOfCurrentDate, startDate.startOf('day').toDate());
 
