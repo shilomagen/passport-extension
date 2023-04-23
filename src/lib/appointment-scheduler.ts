@@ -32,7 +32,7 @@ export class AppointmentScheduler {
 
   async scheduleAppointment(userVisit: UserVisitSuccessData, slot: EnrichedSlot): Promise<SetAppointmentResponse> {
     const { serviceId, date, timeSinceMidnight } = slot;
-    const { visitId, visitToken } = userVisit;
+    const { visitId } = userVisit;
     const setAppointmentRequest: AppointmentSetRequest = {
       ServiceId: serviceId,
       appointmentDate: date,
@@ -42,7 +42,7 @@ export class AppointmentScheduler {
     };
 
     try {
-      const response = await this.httpService.setAppointment(visitToken, setAppointmentRequest);
+      const response = await this.httpService.setAppointment(setAppointmentRequest);
       return response?.Success
         ? aSuccessResponse(response.Results!)
         : aFailedResponse(AppointmentScheduler.resolveError(response!));

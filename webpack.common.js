@@ -1,6 +1,7 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ProgressPlugin } = require('webpack')
 
 module.exports = {
   entry: {
@@ -40,6 +41,7 @@ module.exports = {
       template: 'src/popup/popup.html',
       chunks: ['popup'],
     }),
+    new ProgressPlugin()
   ],
   // Setup @src path resolution for TypeScript files
   resolve: {

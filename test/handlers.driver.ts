@@ -1,16 +1,16 @@
 import nock from 'nock';
-import { GetCalendarSlotTask, GetServiceIdByLocationIdTask, Priority, TaskType } from '@src/content-script/task';
+import { GetCalendarSlotTask, GetServiceIdByLocationIdTask, Priority, TaskType } from '@src/lib/gamkenbot/task';
 import { BaseURL, HttpService, PartialURLs } from '@src/lib/http';
 import { LocationServicesResponse, SearchAvailableSlotsResponse } from '@src/lib/api';
-import { PriorityQueue } from '@src/content-script/priority-queue';
-import { Handler as GetSlotForCalendar } from '@src/content-script/handlers/get-slot-for-calendar/get-slot-for-calendar';
-import { Handler as GetServiceByLocation } from '@src/content-script/handlers/get-service-by-location/get-service-by-location';
+import { PriorityQueue } from '@src/lib/gamkenbot/priority-queue';
+import { Handler as GetSlotForCalendar } from '@src/lib/gamkenbot/handlers/get-slot-for-calendar/get-slot-for-calendar';
+import { Handler as GetServiceByLocation } from '@src/lib/gamkenbot/handlers/get-service-by-location/get-service-by-location';
 import { Locations } from '@src/lib/locations';
 import { ServiceIds } from '@src/lib/constants';
 import { StorageService } from '@src/services/storage';
 import browser from 'webextension-polyfill';
 import { LocalStorageTestkit } from '@test/testkits/storage.testkit';
-import { BaseParams } from '@src/content-script/handlers';
+import { BaseParams } from '@src/lib/gamkenbot/handlers';
 
 const storageTestkit = browser.storage.local as unknown as LocalStorageTestkit;
 

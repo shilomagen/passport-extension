@@ -1,5 +1,5 @@
 import { MaxPriorityQueue } from '@datastructures-js/priority-queue';
-import { Task } from '@src/content-script/task';
+import { Task } from './task';
 
 export class PriorityQueue {
   private readonly queue: MaxPriorityQueue<Task> = new MaxPriorityQueue<Task>((task) => task.priority);

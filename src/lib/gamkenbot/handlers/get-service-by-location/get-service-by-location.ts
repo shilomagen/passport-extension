@@ -1,5 +1,5 @@
-import { BaseHandler, BaseParams } from '@src/content-script/handlers';
-import { GetServiceIdByLocationIdTask, Priority, Task, TaskType } from '@src/content-script/task';
+import { BaseHandler, BaseParams } from '@src/lib/gamkenbot/handlers';
+import { GetServiceIdByLocationIdTask, Priority, Task, TaskType } from '../../task';
 import { Location, Service } from '@src/lib/internal-types';
 
 export class Handler extends BaseHandler<GetServiceIdByLocationIdTask> {

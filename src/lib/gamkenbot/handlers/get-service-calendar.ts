@@ -1,6 +1,6 @@
-import { BaseHandler, BaseParams } from '@src/content-script/handlers/index';
+import { BaseHandler, BaseParams } from '@src/lib/gamkenbot/handlers/index';
 import { DateUtils } from '@src/lib/utils';
-import { GetServiceCalendarTask, Priority, TaskType } from '@src/content-script/task';
+import { GetServiceCalendarTask, Priority, TaskType } from '../task';
 import { DateRange } from '@src/lib/internal-types';
 
 export class Handler extends BaseHandler<GetServiceCalendarTask> {

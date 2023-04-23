@@ -1,23 +1,17 @@
 import { HttpService } from '@src/lib/http';
 import { Location, SearchStatusType, UserVisitSuccessData } from '@src/lib/internal-types';
-import { Handler as GetServiceByLocationHandler } from '@src/content-script/handlers/get-service-by-location/get-service-by-location';
-import { Handler as GetServiceCalendarHandler } from '@src/content-script/handlers/get-service-calendar';
-import { Handler as GetSlotForCalendarHandler } from '@src/content-script/handlers/get-slot-for-calendar/get-slot-for-calendar';
-import { Handler as Scheduler } from '@src/content-script/handlers/scheduler';
+import { Handler as GetServiceByLocationHandler } from '@src/lib/gamkenbot/handlers/get-service-by-location/get-service-by-location';
+import { Handler as GetServiceCalendarHandler } from '@src/lib/gamkenbot/handlers/get-service-calendar';
+import { Handler as GetSlotForCalendarHandler } from '@src/lib/gamkenbot/handlers/get-slot-for-calendar/get-slot-for-calendar';
+import { Handler as Scheduler } from '@src/lib/gamkenbot/handlers/scheduler';
 import { match } from 'ts-pattern';
-import { PriorityQueue } from '@src/content-script/priority-queue';
-import {
-  GetServiceIdByLocationIdTask,
-  Priority,
-  ScheduleAppointmentTask,
-  Task,
-  TaskType,
-} from '@src/content-script/task';
-import { BaseParams } from '@src/content-script/handlers';
+import { PriorityQueue } from './priority-queue';
+import { GetServiceIdByLocationIdTask, Priority, ScheduleAppointmentTask, Task, TaskType } from './task';
+import { BaseParams } from '@src/lib/gamkenbot/handlers';
 import { StorageService } from '@src/services/storage';
 import setRandomInterval, { RandomIntervalClear } from '@src/utils/random-interval';
 import { DateRange } from '@src/lib/internal-types';
-import { dispatchSearchStatus } from '../lib/utils/status';
+import { dispatchSearchStatus } from '../utils/status';
 
 export interface WorkerConfig {
   locations: Location[];
