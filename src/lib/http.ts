@@ -92,7 +92,7 @@ export class HttpService {
 
   public async getCalendars(serviceId: number): Promise<EnrichedService[]> {
     const params: SearchAvailableDatesRequest = {
-      maxResults: 99,
+      maxResults: 31,
       startDate: DateUtils.toApiFormattedDate(Date.now()),
       serviceId,
     };
