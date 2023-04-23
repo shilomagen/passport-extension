@@ -9,7 +9,6 @@ import debounce from 'lodash.debounce';
 import browser, { Tabs } from 'webextension-polyfill';
 import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
-import addDays from 'date-fns/addDays';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
 import {
   validateIsraeliIdNumber,
@@ -32,8 +31,8 @@ export const App: FunctionComponent = () => {
     phone: '',
     cities: [],
     id: '',
-    startDate: DateUtils.getDefaultStartDate().getTime(),
-    endDate: DateUtils.getDefaultEndDate().getTime(),
+    startDate: DateUtils.get.defaultStartDate().getTime(),
+    endDate: DateUtils.get.defaultEndDate().getTime(),
   });
   const [consent, setConsent] = useState(false);
   const [searching, setSearching] = useState(false);

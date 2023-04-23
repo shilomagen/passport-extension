@@ -11,12 +11,15 @@ export const DateUtils = {
     const dateFormat = new Date(date);
     return dateFormat >= startDate && dateFormat <= endDate;
   },
+  isEqual: (currentDate: Date, compareDate: Date): boolean => currentDate.getTime() === compareDate.getTime(),
   isBefore: (currentDate: Date, compareDate: Date): boolean => currentDate < compareDate,
   isAfter: (currentDate: Date, compareDate: Date): boolean => currentDate > compareDate,
   timeSinceMidnightToHour: (timeSinceMidnight: number): string =>
     `${padIfNeeded(Math.floor(timeSinceMidnight / 60))}:${padIfNeeded(timeSinceMidnight % 60)}`,
   toApiFormattedDate: (date: string | number) => format(new Date(date), ApiDateFormat),
   toIsraelFormattedDate: (date: string | number) => format(new Date(date), IsraelDateFormat),
-  getDefaultStartDate: () => new Date(),
-  getDefaultEndDate: () => addDays(new Date(), 14),
+  get: {
+    defaultStartDate: () => new Date(),
+    defaultEndDate: () => addDays(new Date(), 14),
+  },
 };

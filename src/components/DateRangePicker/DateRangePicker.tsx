@@ -1,14 +1,14 @@
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent } from 'react';
 import parse from 'date-fns/parse';
 import { UserMetadata } from '@src/services/storage';
 import Content from '@src/content.json';
 import { DatePicker, Typography } from 'antd';
 import styles from './DateRangePicker.scss';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 const { Text } = Typography;
-import { DateUtils, IsraelDateFormat } from '@src/lib/utils/date';
+import { IsraelDateFormat } from '@src/lib/utils/date';
 import { DateRangePickerTestIds } from '@src/components/dataTestIds';
-import addDays from 'date-fns/addDays';
+import { isValidEndDate, isValidStartDate } from '@src/validators/validators';
 
 export enum DateOptions {
   START_DATE = 'startDate',
@@ -23,28 +23,6 @@ interface IDateRangePickerProps {
 export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDateChange, userMetadata }) => {
   const startDate = userMetadata.startDate ? dayjs(userMetadata.startDate) : undefined;
   const endDate = userMetadata.endDate ? dayjs(userMetadata.endDate) : undefined;
-  const startOfTodayDate = dayjs(new Date()).startOf('day');
-
-  useEffect(() => {
-    // Verify that both start and end dates are set to a date on or after today
-    if (startDate && startDate.startOf('day').isBefore(startOfTodayDate)) {
-      onDateChange(DateUtils.getDefaultStartDate(), DateOptions.START_DATE);
-    }
-    if (endDate && endDate.startOf('day').isBefore(startOfTodayDate)) {
-      onDateChange(DateUtils.getDefaultEndDate(), DateOptions.END_DATE);
-    }
-  }, [userMetadata]);
-
-  const shouldDisabledDates = (currentDate: Dayjs, dateOption: DateOptions): boolean => {
-    // Start Date - Disable all dates before today's date or before the chosen first date for appointment
-    // End Date - Disable all dates before today's date or after the chosen last date for appointment
-    const startOfCurrentDate = currentDate.startOf('day').toDate();
-    const isBeforeToday = DateUtils.isBefore(startOfCurrentDate, startOfTodayDate.toDate());
-    const isAfterEndDate = !!endDate && DateUtils.isAfter(startOfCurrentDate, endDate.startOf('day').toDate());
-    const isBeforeStartDate = !!startDate && DateUtils.isBefore(startOfCurrentDate, startDate.startOf('day').toDate());
-
-    return isBeforeToday || (dateOption === DateOptions.START_DATE ? isAfterEndDate : isBeforeStartDate);
-  };
 
   const _onDateChange = (dateString: string, dateOption: DateOptions) => {
     const selectedDate = parse(dateString, IsraelDateFormat, new Date());
@@ -61,7 +39,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
           value={startDate}
           data-testid={DateRangePickerTestIds.START_DATE_PICKER}
           format={IsraelDateFormat.toUpperCase()}
-          disabledDate={(date) => date && shouldDisabledDates(date, DateOptions.START_DATE)}
+          disabledDate={(date) => date && !isValidStartDate(date, endDate)}
           onChange={(_, dateString) => _onDateChange(dateString, DateOptions.START_DATE)}
         />
       </div>
@@ -72,7 +50,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
           className={styles.datePickerContainer}
           format={IsraelDateFormat.toUpperCase()}
           data-testid={DateRangePickerTestIds.END_DATE_PICKER}
-          disabledDate={(date) => date && shouldDisabledDates(date, DateOptions.END_DATE)}
+          disabledDate={(date) => date && !isValidEndDate(date, startDate)}
           value={endDate}
           onChange={(_, dateString) => _onDateChange(dateString, DateOptions.END_DATE)}
         />
