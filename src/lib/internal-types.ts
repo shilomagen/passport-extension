@@ -79,6 +79,7 @@ export enum SearchStatusType {
   Started = 'SEARCH_STARTED',
   Warning = 'SEARCH_WARNING',
   Error = 'SEARCH_ERROR',
+  Complete = 'SEARCH_COMPLETE', 
   Stopped = 'SEARCH_STOPPED'
 }
 

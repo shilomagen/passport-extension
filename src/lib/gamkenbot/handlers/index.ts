@@ -1,5 +1,5 @@
-import { PriorityQueue } from '@src/content-script/priority-queue';
-import { BaseTask } from '@src/content-script/task';
+import { PriorityQueue } from '../priority-queue';
+import { BaseTask } from '../task';
 import { HttpService } from '@src/lib/http';
 import { StorageService } from '@src/services/storage';
 

@@ -35,7 +35,7 @@
   },
   "results": {
     "userHasAppointment": "לא ניתן לקבוע תור כי כבר קיים תור פעיל",
-    "scheduledSuccessfully": "התור נקבע בהצלחה"
+    "scheduledSuccessfully": "התור נקבע בהצלחה ב{0} לתאריך {1} בשעה {2}"
   },
   "errors": {
     "noUserData": "אין מספיק נתונים. ודאו שהזנתם את כל הפרטים",

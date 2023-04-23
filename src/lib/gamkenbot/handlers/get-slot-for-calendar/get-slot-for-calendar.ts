@@ -1,5 +1,5 @@
-import { BaseHandler } from '@src/content-script/handlers';
-import { GetCalendarSlotTask, Priority, TaskType } from '@src/content-script/task';
+import { BaseHandler } from '@src/lib/gamkenbot/handlers';
+import { GetCalendarSlotTask, Priority, TaskType } from '../../task';
 import { toCalendarSlot, toEnrichedSlot } from '@src/lib/mappers';
 import { EnrichedSlot } from '@src/lib/internal-types';
 

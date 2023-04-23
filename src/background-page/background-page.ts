@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill';
 import { StorageService } from '@src/services/storage';
 import { ActionTypes, PlatformMessage } from '@src/platform-message';
-import { SearchStatusType } from '@src/lib/internal-types';
-import { dispatchSearchStatus } from '@src/lib/utils/status';
+import { Gamkenbot } from '@src/lib/gamkenbot/gamkenbot';
+import { match } from 'ts-pattern';
 
 const storageService = new StorageService();
 
@@ -15,11 +15,8 @@ browser.webNavigation.onCompleted.addListener(
         await storageService.setLoggedIn(true);
       }
     });
-    
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    
-    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.IsLoggedIn } as PlatformMessage);
-    await dispatchSearchStatus({ type: SearchStatusType.Stopped })
+        
+    await browser.runtime.sendMessage({ action: ActionTypes.IsLoggedIn } as PlatformMessage);
   },
   { url: [{ hostSuffix: '.myvisit.com' }] },
 );
@@ -38,3 +35,14 @@ browser.runtime.onInstalled.addListener(async (details) => {
 
   await storageService.updateLastExtensionVersion()
 })
+
+const gamkenbot = new Gamkenbot();
+
+browser.runtime.onMessage.addListener((message: PlatformMessage) => {
+  match(message)
+    .with({ action: ActionTypes.IsLoggedIn }, gamkenbot.setLoggedIn)
+    .with({ action: ActionTypes.StartSearch }, gamkenbot.startSearching)
+    .with({ action: ActionTypes.StopSearch }, gamkenbot.stopSearching)
+    .with({ action: ActionTypes.SetSearchStatus }, () => {})
+    .exhaustive();
+});

@@ -2,7 +2,7 @@ import { HandlersDriver } from '@test/handlers.driver';
 import { Locations } from '@src/lib/locations';
 import { LocationServicesResultFixtures } from '@test/fixtures/location-service.fixture';
 import { LocationServicesResponseFixtures } from '@test/fixtures/location-services-response.fixture';
-import { GetServiceCalendarTask, Priority, TaskType } from '@src/content-script/task';
+import { GetServiceCalendarTask, Priority, TaskType } from '@src/lib/gamkenbot/task';
 import { DAY, LOCATION_PREFIX } from '@src/services/storage';
 import { toService } from '@src/lib/mappers';
 import { Service } from '@src/lib/internal-types';
