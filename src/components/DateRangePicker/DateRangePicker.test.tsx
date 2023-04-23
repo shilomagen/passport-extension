@@ -25,6 +25,42 @@ describe('Date Range Picker', () => {
       expect(endDate).toEqual(defaultEndDate);
     });
   });
+  describe('Invalid Date Selection', () => {
+    it('should not allow choosing a date in the past for start date', async () => {
+      const startDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(startDate).toEqual(todayDate);
+
+      // Try to select a disabled date
+      driver.dateRangePickerDriver.set.startDate(yesterdayDate);
+
+      // start date should not change
+      const currentStartDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(currentStartDate).toBe(todayDate);
+    });
+
+    it('should not allow choosing a start date that is after the end date', async () => {
+      const startDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(startDate).toEqual(todayDate);
+
+      const dateAfterEndDate = format(addDays(new Date(), 20), IsraelDateFormat);
+      // Try to select a disabled date
+      driver.dateRangePickerDriver.set.startDate(dateAfterEndDate);
+
+      // start date should not change
+      const currentStartDate = driver.dateRangePickerDriver.get.startDateValue();
+      expect(currentStartDate).toBe(todayDate);
+    });
+
+    it('should not allow choosing a end date that is in the past', async () => {
+      expect(driver.dateRangePickerDriver.get.endDateValue()).toEqual(defaultEndDate);
+
+      // Try to select a disabled date
+      driver.dateRangePickerDriver.set.endDate(yesterdayDate);
+
+      // end date should not change
+      expect(driver.dateRangePickerDriver.get.endDateValue()).toBe(defaultEndDate);
+    });
+  });
 
   describe('Date Selection', () => {
     it('should select the start date to be tomorrow', async () => {
@@ -45,43 +81,6 @@ describe('Date Range Picker', () => {
 
       const updatedEndDate = driver.dateRangePickerDriver.get.endDateValue();
       expect(updatedEndDate).toBe(newEndDate);
-    });
-  });
-
-  describe('Invalid Date Selection', () => {
-    it('should not allow choosing a date in the past for start date', async () => {
-      const startDate = driver.dateRangePickerDriver.get.startDateValue();
-      expect(startDate).toEqual(todayDate);
-
-      // Try to select a disabled date
-      driver.dateRangePickerDriver.set.startDate(yesterdayDate);
-
-      // start date should not change
-      const currentStartDate = driver.dateRangePickerDriver.get.startDateValue();
-      expect(currentStartDate).toBe(todayDate);
-    });
-
-    it('should not allow choosing a start date that is after the end date', async () => {
-      const startDate = driver.dateRangePickerDriver.get.startDateValue();
-      expect(startDate).toEqual(todayDate);
-
-      const dateAfterEndDate = format(addDays(new Date(), 16), IsraelDateFormat);
-      // Try to select a disabled date
-      driver.dateRangePickerDriver.set.startDate(dateAfterEndDate);
-
-      // start date should not change
-      const currentStartDate = driver.dateRangePickerDriver.get.startDateValue();
-      expect(currentStartDate).toBe(todayDate);
-    });
-
-    it('should not allow choosing a end date that is in the past', async () => {
-      expect(driver.dateRangePickerDriver.get.endDateValue()).toEqual(defaultEndDate);
-
-      // Try to select a disabled date
-      driver.dateRangePickerDriver.set.endDate(yesterdayDate);
-
-      // end date should not change
-      expect(driver.dateRangePickerDriver.get.endDateValue()).toBe(defaultEndDate);
     });
   });
 });
