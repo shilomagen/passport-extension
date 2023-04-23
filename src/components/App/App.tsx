@@ -22,7 +22,6 @@ import { ActionTypes } from '@src/platform-message';
 
 import Tab = Tabs.Tab;
 import { DateUtils } from '@src/lib/utils';
-import subDays from 'date-fns/subDays';
 
 const { Title, Text } = Typography;
 
