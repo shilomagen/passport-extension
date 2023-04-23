@@ -29,7 +29,7 @@ export const validateNumberOfAllowedCities = (cities: string[] | null | undefine
   return cities.length > 4;
 };
 
-export const isValidEndDate = (date: Dayjs, startDate?: Dayjs): boolean => {
+export const validateEndDate = (date: Dayjs, startDate?: Dayjs): boolean => {
   const startOfCompareDate = date.startOf('day').toDate();
   const startOfTodayDate = dayjs(new Date()).startOf('day').toDate();
   const startOfStartDate = startDate ? startDate.startOf('day').toDate() : undefined;
@@ -47,7 +47,7 @@ export const isValidEndDate = (date: Dayjs, startDate?: Dayjs): boolean => {
   return isAfterOrEqualToday && isAfterOrEqualStartDate;
 };
 
-export const isValidStartDate = (date: Dayjs, endDate?: Dayjs): boolean => {
+export const validateStartDate = (date: Dayjs, endDate?: Dayjs): boolean => {
   const startOfCompareDate = date.startOf('day').toDate();
   const startOfTodayDate = dayjs(new Date()).startOf('day').toDate();
   const startOfEndDate = endDate ? endDate.startOf('day').toDate() : undefined;

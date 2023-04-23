@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 const { Text } = Typography;
 import { IsraelDateFormat } from '@src/lib/utils/date';
 import { DateRangePickerTestIds } from '@src/components/dataTestIds';
-import { isValidEndDate, isValidStartDate } from '@src/validators/validators';
+import { validateStartDate, validateEndDate } from '@src/validators/validators';
 
 export enum DateOptions {
   START_DATE = 'startDate',
@@ -39,7 +39,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
           value={startDate}
           data-testid={DateRangePickerTestIds.START_DATE_PICKER}
           format={IsraelDateFormat.toUpperCase()}
-          disabledDate={(date) => date && !isValidStartDate(date, endDate)}
+          disabledDate={(date) => date && !validateStartDate(date, endDate)}
           onChange={(_, dateString) => _onDateChange(dateString, DateOptions.START_DATE)}
         />
       </div>
@@ -50,7 +50,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = ({ onDa
           className={styles.datePickerContainer}
           format={IsraelDateFormat.toUpperCase()}
           data-testid={DateRangePickerTestIds.END_DATE_PICKER}
-          disabledDate={(date) => date && !isValidEndDate(date, startDate)}
+          disabledDate={(date) => date && !validateEndDate(date, startDate)}
           value={endDate}
           onChange={(_, dateString) => _onDateChange(dateString, DateOptions.END_DATE)}
         />

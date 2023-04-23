@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
+import dayjs from 'dayjs';
 import { StorageService, UserMetadata } from '@src/services/storage';
 import { Button, Input, Select, Typography } from 'antd';
 import { DateOptions, DateRangePicker } from '@src/components/DateRangePicker/DateRangePicker';
@@ -11,14 +12,17 @@ import GamKenBot from '@src/assets/gamkenbot.svg';
 import { Consent } from '@src/components/Consent/Consent';
 import { LoginStatus } from '@src/components/LoginStatus/LoginStatus';
 import {
+  validateEndDate,
   validateIsraeliIdNumber,
   validateNumberOfAllowedCities,
   validatePhoneNumber,
+  validateStartDate,
 } from '@src/validators/validators';
 import { ActionTypes } from '@src/platform-message';
 
 import Tab = Tabs.Tab;
 import { DateUtils } from '@src/lib/utils';
+import subDays from 'date-fns/subDays';
 
 const { Title, Text } = Typography;
 
@@ -60,8 +64,23 @@ export const App: FunctionComponent = () => {
 
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
+  const initializeDates = (metadata: UserMetadata) => {
+    let startDate = metadata.startDate;
+    let endDate = metadata.endDate;
+
+    // Verify that both start and end dates valid, otherwise, set default values.
+    if (startDate && !validateStartDate(dayjs(startDate))) {
+      startDate = DateUtils.get.defaultStartDate().getTime();
+    }
+    if (endDate && !validateEndDate(dayjs(endDate))) {
+      endDate = DateUtils.get.defaultEndDate().getTime();
+    }
+    return { startDate, endDate };
+  };
+
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id, startDate, endDate } = metadata;
+    const { cities, phone, id } = metadata;
+    const { startDate, endDate } = initializeDates(metadata);
     setUserMetadata({ cities, phone, id, startDate, endDate });
   };
 
