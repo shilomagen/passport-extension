@@ -8,6 +8,7 @@
     "test": "jest",
     "lint:check": "eslint -c ./.eslintrc.js \"src/**/*.ts*\"",
     "lint": "npm run lint:check -- --fix",
+    "lint:fix": "eslint --fix -c ./.eslintrc.js \"src/**/*.ts*\"",
     "prettify:check": "prettier \"src/**/*.ts*\"",
     "prettify": "prettier --write \"src/**/*.ts*\""
   },
