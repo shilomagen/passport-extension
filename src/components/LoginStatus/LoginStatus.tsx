@@ -12,7 +12,7 @@ export const LoginStatus: FunctionComponent = () => {
   return (
     <div className={styles.container}>
       <div className={circleStyle} />
-      <Text>{loggedIn ? Content.connected : Content.disconnected}</Text>
+      <Text style={{color:'white'}}>{loggedIn ? Content.connected : Content.disconnected}</Text>
     </div>
   );
 };

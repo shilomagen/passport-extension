@@ -18,6 +18,7 @@ import {
 } from '@src/validators/validators';
 import { ActionTypes } from '@src/platform-message';
 import Tab = Tabs.Tab;
+import Spinner from '../Spinner/Spinner';
 
 const { Title, Text } = Typography;
 
@@ -37,7 +38,12 @@ export const App: FunctionComponent = () => {
 
   useEffect(() => {
     storageService.getConsent().then(setConsent);
-    storageService.getIsSearching().then(setSearching);
+    storageService.getIsSearching().then((isSearching) => {
+      setSearching(isSearching);
+      if(isSearching){
+        changeWindowSize();
+      }
+    });
   }, []);
 
   const setUserConsent = (val: boolean) => {
@@ -69,6 +75,10 @@ export const App: FunctionComponent = () => {
       setDataInCache(newMetadata);
     };
 
+    const changeWindowSize = () => {
+      document.getElementsByTagName("html")[0].style.height="500px";
+    }
+  
   useEffect(() => {
     storageService.getUserMetadata().then((metadata) => {
       if (metadata) {
@@ -91,9 +101,11 @@ export const App: FunctionComponent = () => {
     return tab;
   };
 
+
   const start = async () => {
     const maybeMyVisitTab = await getMyVisitTab();
     if (maybeMyVisitTab) {
+      changeWindowSize();
       await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action: ActionTypes.StartSearch });
       setSearching(true);
     }
@@ -108,14 +120,18 @@ export const App: FunctionComponent = () => {
   };
 
   return (
+    
     <div className={styles.container}>
-      <LoginStatus />
+
+        <LoginStatus />
       <div>
-        <Title level={2}>{Content.title}</Title>
+        <Title style={{color:'white'}} level={2}>{Content.title}</Title>
         <div className={styles.logoContainer}>
           <GamKenBot className={styles.logo} />
         </div>
       </div>
+    { !searching ?
+        <>
       <Input
         className={styles.inputContainer}
         addonBefore={Content.id.label}
@@ -134,7 +150,7 @@ export const App: FunctionComponent = () => {
         status={validatePhoneNumber(userMetadata.phone) ? '' : 'error'}
         onChange={(e) => setMetadata('phone')(e.target.value)}
       />
-      <Text>{Content.maxCitiesText}</Text>
+      <Text className={styles.text}>{Content.maxCitiesText}</Text>
       <Select
         options={ALL_CITIES}
         value={userMetadata.cities}
@@ -145,7 +161,7 @@ export const App: FunctionComponent = () => {
         status={validateNumberOfAllowedCities(userMetadata.cities) ? 'error' : ''}
         className={styles.selectContainer}
       />
-      <Text>{Content.maxDateForAppointment.title}</Text>
+      <Text className={styles.text}>{Content.maxDateForAppointment.title}</Text>
       <DatePicker
         placeholder={Content.maxDateForAppointment.placeholder}
         className={styles.datePickerContainer}
@@ -155,11 +171,15 @@ export const App: FunctionComponent = () => {
       <div className={styles.consentContainer}>
         <Consent onConsentChanged={setUserConsent} consent={consent} />
       </div>
+        </> 
+        :
+        <Spinner />
+      }
       <div className={styles.buttonContainer}>
-        {searching ? (
-          <Button onClick={stop}>{Content.buttons.stopSearch}</Button>
+      {searching ? (
+          <Button className={styles.button} onClick={stop}>{Content.buttons.stopSearch}</Button>
         ) : (
-          <Button onClick={start} disabled={!submitEnabled}>
+          <Button className={styles.button} onClick={start} disabled={!submitEnabled}>
             {Content.buttons.search}
           </Button>
         )}
