@@ -47,7 +47,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = (props)
           format={IsraelDateFormat.toUpperCase()}
           data-testid={DatePickerTestIds.START_DATE_PICKER}
           disabledDate={(date) => date && shouldDisabledDates(date)}
-          status={startDate && !validateStartDate(startDate, endDate) ? 'error' : ''}
+          status={!validateStartDate(props.startDate, props.endDate) ? 'error' : ''}
           onChange={(_, dateString) => _onDateChanged(dateString, DateOptions.START_DATE)}
         />
       </div>
@@ -60,7 +60,7 @@ export const DateRangePicker: FunctionComponent<IDateRangePickerProps> = (props)
           data-testid={DatePickerTestIds.END_DATE_PICKER}
           value={endDate}
           disabledDate={(date) => date && shouldDisabledDates(date)}
-          status={endDate && !validateEndDate(endDate, startDate) ? 'error' : ''}
+          status={!validateEndDate(props.endDate, props.startDate) ? 'error' : ''}
           onChange={(_, dateString) => _onDateChanged(dateString, DateOptions.END_DATE)}
         />
       </div>

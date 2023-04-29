@@ -97,8 +97,8 @@ describe('App', () => {
     driver.userMetadataDriver.when.chooseStartDate(tomorrowDate);
     driver.userMetadataDriver.when.chooseEndDate(todayDate);
 
-    expect(driver.userMetadataDriver.get.startDateValue()).toEqual(tomorrowDate);
-    expect(driver.userMetadataDriver.get.endDateValue()).toEqual(todayDate);
+    expect(driver.userMetadataDriver.get.startDate()).toEqual(tomorrowDate);
+    expect(driver.userMetadataDriver.get.endDate()).toEqual(todayDate);
 
     expect(driver.get.startButton()).toBeDisabled();
   });

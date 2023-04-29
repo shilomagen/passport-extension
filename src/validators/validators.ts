@@ -1,5 +1,5 @@
 import { DateUtils } from '@src/lib/utils';
-import dayjs, { Dayjs } from 'dayjs';
+import startOfDay from 'date-fns/startOfDay';
 
 export const validateIsraeliIdNumber = (id: any): boolean => {
   if (!id) {
@@ -26,38 +26,45 @@ export const validateNumberOfAllowedCities = (cities: string[]): boolean => {
   return cities.length > 0 && cities.length <= 4;
 };
 
-export const validateEndDate = (date: Dayjs, startDate?: Dayjs): boolean => {
-  const startOfCompareDate = date.startOf('day').toDate();
-  const startOfTodayDate = dayjs(new Date()).startOf('day').toDate();
-  const startOfStartDate = startDate ? startDate.startOf('day').toDate() : undefined;
-
-  const isAfterOrEqualToday =
-    DateUtils.isAfter(startOfCompareDate, startOfTodayDate) || DateUtils.isEqual(startOfCompareDate, startOfTodayDate);
-
-  if (!startOfStartDate) {
-    return isAfterOrEqualToday;
+export const validateEndDate = (endDate: number, startDate?: number): boolean => {
+  if (endDate === 0) {
+    return false;
   }
 
-  const isAfterOrEqualStartDate =
-    DateUtils.isAfter(startOfCompareDate, startOfStartDate) || DateUtils.isEqual(startOfCompareDate, startOfStartDate);
+  const startOfEndDate = startOfDay(new Date(endDate));
+  const startOfTodayDate = startOfDay(new Date());
+  const startOfStartDate = startDate ? startOfDay(new Date(startDate)) : undefined;
 
-  return isAfterOrEqualToday && isAfterOrEqualStartDate;
+  const isAfterOrEqualToday =
+    DateUtils.isAfter(startOfEndDate, startOfTodayDate) || DateUtils.isEqual(startOfEndDate, startOfTodayDate);
+
+  if (startOfStartDate) {
+    const isAfterOrEqualStartDate =
+      DateUtils.isAfter(startOfEndDate, startOfStartDate) || DateUtils.isEqual(startOfEndDate, startOfStartDate);
+
+    return isAfterOrEqualToday && isAfterOrEqualStartDate;
+  }
+
+  return isAfterOrEqualToday;
 };
 
-export const validateStartDate = (date: Dayjs, endDate?: Dayjs): boolean => {
-  const startOfCompareDate = date.startOf('day').toDate();
-  const startOfTodayDate = dayjs(new Date()).startOf('day').toDate();
-  const startOfEndDate = endDate ? endDate.startOf('day').toDate() : undefined;
-
-  const isAfterOrEqualToday =
-    DateUtils.isAfter(startOfCompareDate, startOfTodayDate) || DateUtils.isEqual(startOfCompareDate, startOfTodayDate);
-
-  if (!startOfEndDate) {
-    return isAfterOrEqualToday;
+export const validateStartDate = (startDate: number, endDate?: number): boolean => {
+  if (startDate === 0) {
+    return false;
   }
 
-  const isBeforeOrEqualEndDate =
-    DateUtils.isBefore(startOfCompareDate, startOfEndDate) || DateUtils.isEqual(startOfCompareDate, startOfEndDate);
+  const startOfStartDate = startOfDay(new Date(startDate));
+  const startOfTodayDate = startOfDay(new Date());
+  const startOfEndDate = endDate ? startOfDay(new Date(endDate)) : undefined;
 
-  return isAfterOrEqualToday && isBeforeOrEqualEndDate;
+  const isAfterOrEqualToday =
+    DateUtils.isAfter(startOfStartDate, startOfTodayDate) || DateUtils.isEqual(startOfStartDate, startOfTodayDate);
+
+  if (startOfEndDate) {
+    const isBeforeOrEqualEndDate =
+      DateUtils.isBefore(startOfStartDate, startOfEndDate) || DateUtils.isEqual(startOfStartDate, startOfEndDate);
+    return isAfterOrEqualToday && isBeforeOrEqualEndDate;
+  }
+
+  return isAfterOrEqualToday;
 };

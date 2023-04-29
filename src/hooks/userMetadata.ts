@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { StorageService, UserMetadata } from '@src/services/storage';
-import { DateUtils } from '@src/lib/utils';
 import {
   validateEndDate,
   validateIsraeliIdNumber,
@@ -8,7 +7,6 @@ import {
   validatePhoneNumber,
   validateStartDate,
 } from '@src/validators/validators';
-import dayjs from 'dayjs';
 import debounce from 'lodash.debounce';
 import addDays from 'date-fns/addDays';
 
@@ -39,24 +37,8 @@ export const useUserMetadata = (storageService: StorageService) => {
   const setDataInCache = debounce((userMetadata) => storageService.setUserMetadata(userMetadata), 500);
 
   const initializeMetadata = (metadata: UserMetadata) => {
-    const { cities, phone, id } = metadata;
-    const { startDate, endDate } = initializeDates(metadata);
+    const { cities, phone, id, startDate, endDate } = metadata;
     setUserMetadata({ cities, phone, id, startDate, endDate });
-  };
-
-  const initializeDates = (metadata: UserMetadata) => {
-    const startOfTodayDate = dayjs(new Date()).startOf('day').toDate();
-
-    const startDate =
-      metadata.startDate && DateUtils.isBefore(new Date(metadata.startDate), startOfTodayDate)
-        ? new Date().getTime()
-        : metadata.startDate;
-    const endDate =
-      metadata.endDate && DateUtils.isBefore(new Date(metadata.endDate), startOfTodayDate)
-        ? addDays(new Date(), 14).getTime()
-        : metadata.endDate;
-
-    return { startDate, endDate };
   };
 
   const setMetadata: SetMetadata =
@@ -71,10 +53,8 @@ export const useUserMetadata = (storageService: StorageService) => {
     validateIsraeliIdNumber(id) &&
     validatePhoneNumber(phone) &&
     validateNumberOfAllowedCities(cities) &&
-    startDate > 0 &&
-    validateStartDate(dayjs(startDate), endDate ? dayjs(endDate) : undefined) &&
-    endDate > 0 &&
-    validateEndDate(dayjs(endDate), startDate ? dayjs(startDate) : undefined);
+    validateStartDate(startDate, endDate) &&
+    validateEndDate(endDate, startDate);
 
   return { userMetadata, isValidMetadata, setMetadata };
 };

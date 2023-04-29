@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import { DatePickerTestIds, UserMetadataTestIds } from '@src/components/dataTestIds';
 
-export class RTLUserMetadata {
+export class RTLUserMetadataDriver {
   constructor(private readonly renderResult: RenderResult) {}
 
   private getStartDateElement() {
@@ -34,14 +34,9 @@ export class RTLUserMetadata {
 
     phoneNumber: () => this.getPhoneNumber().getAttribute('value'),
 
-    startDateValue: () => this.getStartDateElement().getAttribute('value'),
+    startDate: () => this.getStartDateElement().getAttribute('value'),
 
-    endDateValue: () => this.getEndDateElement().getAttribute('value'),
-
-    endDateStatus: () => {
-      const element = this.getEndDateElement();
-      return element;
-    },
+    endDate: () => this.getEndDateElement().getAttribute('value'),
   };
 
   when = {

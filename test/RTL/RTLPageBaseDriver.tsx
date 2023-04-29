@@ -2,19 +2,23 @@ import { render, waitFor, RenderResult, fireEvent } from '@testing-library/react
 import { App } from '@src/components/App';
 import React from 'react';
 import Content from '@src/content.json';
-import { RTLUserMetadata } from '@test/RTL/RTLUserMetadata';
+import { RTLUserMetadataDriver } from '@test/RTL/RTLUserMetadataDriver';
 import { AppTestIds } from '@src/components/dataTestIds';
 import browser from 'webextension-polyfill';
 
 export class PageBaseDriver {
   public renderResult!: RenderResult;
-  public userMetadataDriver!: RTLUserMetadata;
+  public userMetadataDriver!: RTLUserMetadataDriver;
 
   async mount() {
-    browser.storage.local.clear();
+    await this.clearStorage();
     this.renderResult = render(<App />);
     await waitFor(() => this.get.title());
-    this.userMetadataDriver = new RTLUserMetadata(this.renderResult);
+    this.userMetadataDriver = new RTLUserMetadataDriver(this.renderResult);
+  }
+
+  private async clearStorage() {
+    return browser.storage.local.clear();
   }
 
   get = {
