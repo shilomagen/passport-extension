@@ -1,3 +1,5 @@
+@use '../Styles/variables.scss' as v;
+
 .container {
   position: relative;
   min-height: 400px;
@@ -5,10 +7,14 @@
   min-width: 500px;
   display: flex;
   flex-direction: column;
+  background-color: v.$background-primary-color;
+  color:v.$white-color;
 }
 
 .inputContainer {
   margin-bottom: 20px;
+  background-color: v.$light-gray-color;
+  color: v.$white-color ;
 }
 
 .selectContainer {
@@ -43,4 +49,20 @@
 
 .consentContainer {
   margin-bottom: 20px;
+}
+
+.button{
+  background-color: v.$light-blue-color;
+  color: v.$white-color;
+  width: 140px;
+  height: 40px;
+  border: none;
+  border-radius: 40px;
+}
+.button:hover{
+  transform: scale(0.9);
+  color: v.$white-color !important;
+}
+.text{
+  color:v.$white-color;
 }

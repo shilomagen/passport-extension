@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Checkbox } from 'antd';
 import { consent as Content } from '@src/content.json';
+import styles from './Consent.scss'
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const TERMS_AND_CONDITIONS_URL = 'https://myvisit.com/templates/directives/termsDialog.html';
@@ -22,11 +23,11 @@ export const Consent: FunctionComponent<IConsentProps> = ({ onConsentChanged, co
 
   return (
     <Checkbox onChange={onCheckboxChanged} checked={consent}>
-      {Content.prefix}{' '}
-      <a href="" onClick={onTermsAndConditionsClick}>
-        {Content.termsAndConditions}
+       <span className={styles.text}>{Content.prefix}</span>{' '}
+      <a  href="" onClick={onTermsAndConditionsClick}>
+       {Content.termsAndConditions}
       </a>{' '}
-      {Content.suffix}
+      <span className={styles.text}>{Content.suffix}</span>
     </Checkbox>
   );
 };

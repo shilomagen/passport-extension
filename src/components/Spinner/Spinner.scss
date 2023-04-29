@@ -1,0 +1,119 @@
+@use '../Styles/variables.scss' as v;
+
+.container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.spinner {
+    border: 16px solid v.$spinner-background-color; 
+    border-top: 16px solid v.$light-blue-color; 
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    animation: spin 2s linear infinite;
+    margin:auto;
+    margin-bottom: 1rem;
+  }
+  
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  .title{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dot-elastic {
+    position: relative;
+    width: 10px;
+    height: 20px;
+    border-radius: 5px;
+    background-color:v.$light-blue-color;
+    color: v.$light-blue-color;
+    animation: dot-elastic 1s infinite linear;
+  }
+  .dot-elastic::before, .dot-elastic::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+  }
+  .dot-elastic::before {
+    left: -15px;
+    width: 10px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: v.$light-blue-color;
+    color: v.$light-blue-color;
+    animation: dot-elastic-before 1s infinite linear;
+  }
+  .dot-elastic::after {
+    left: 15px;
+    width: 10px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: v.$light-blue-color;
+    color: v.$light-blue-color;
+    animation: dot-elastic-after 1s infinite linear;
+  }
+  
+  @keyframes dot-elastic-before {
+    0% {
+      transform: scale(1, 1);
+    }
+    25% {
+      transform: scale(1, 1.5);
+    }
+    50% {
+      transform: scale(1, 0.67);
+    }
+    75% {
+      transform: scale(1, 1);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
+  @keyframes dot-elastic {
+    0% {
+      transform: scale(1, 1);
+    }
+    25% {
+      transform: scale(1, 1);
+    }
+    50% {
+      transform: scale(1, 1.5);
+    }
+    75% {
+      transform: scale(1, 1);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
+  @keyframes dot-elastic-after {
+    0% {
+      transform: scale(1, 1);
+    }
+    25% {
+      transform: scale(1, 1);
+    }
+    50% {
+      transform: scale(1, 0.67);
+    }
+    75% {
+      transform: scale(1, 1.5);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }

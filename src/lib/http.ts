@@ -33,16 +33,16 @@ export const PartialURLs = {
 };
 
 export const Urls = {
-  createAnonymousSession: `${BaseURL}/${PartialURLs.createAnonymousSession}`,
-  locationSearch: `${BaseURL}/${PartialURLs.locationSearch}`,
-  locationServices: `${BaseURL}/${PartialURLs.locationServices}`,
-  searchAvailableDates: `${BaseURL}/${PartialURLs.searchAvailableDates}`,
-  searchAvailableSlots: `${BaseURL}/${PartialURLs.searchAvailableSlots}`,
-  setAppointment: `${BaseURL}/${PartialURLs.setAppointment}`,
-  cancelAppointment: `${BaseURL}/${PartialURLs.cancelAppointment}`,
-  prepareVisit: `${BaseURL}/${PartialURLs.prepareVisit}`,
-  getUserInfo: `${BaseURL}/${PartialURLs.getUserInfo}`,
-  answer: (visitToken: string) => `${BaseURL}/${PartialURLs.answer(visitToken)}`,
+  createAnonymousSession: `${PartialURLs.createAnonymousSession}`,
+  locationSearch: `${PartialURLs.locationSearch}`,
+  locationServices: `${PartialURLs.locationServices}`,
+  searchAvailableDates: `${PartialURLs.searchAvailableDates}`,
+  searchAvailableSlots: `${PartialURLs.searchAvailableSlots}`,
+  setAppointment: `${PartialURLs.setAppointment}`,
+  cancelAppointment: `${PartialURLs.cancelAppointment}`,
+  prepareVisit: `${PartialURLs.prepareVisit}`,
+  getUserInfo: `${PartialURLs.getUserInfo}`,
+  answer: (visitToken: string) => `${PartialURLs.answer(visitToken)}`,
 };
 
 export class HttpService {
@@ -50,6 +50,7 @@ export class HttpService {
 
   constructor(onAuthError: () => Promise<void>) {
     this.httpClient = axios.create({
+      baseURL: BaseURL,
       headers: {
         // MyVisit default configuration
         'application-api-key': 'D7662A08-48D1-4BC8-9E45-7F9DDF8987E3',
