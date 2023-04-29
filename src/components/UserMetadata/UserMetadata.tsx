@@ -1,5 +1,6 @@
-import { Input, Select, Typography } from 'antd';
+import React, { FunctionComponent } from 'react';
 import styles from './UserMetadata.scss';
+import { Input, Select, Typography } from 'antd';
 import Content from '@src/content.json';
 import {
   validateIsraeliIdNumber,
@@ -8,7 +9,6 @@ import {
 } from '@src/validators/validators';
 import { UserMetadataTestIds } from '@src/components/dataTestIds';
 import { DateOptions, DateRangePicker } from '@src/components/DateRangePicker/DateRangePicker';
-import React, { FunctionComponent } from 'react';
 import { Locations } from '@src/lib/locations';
 import { UserMetadata as UserMetadataType } from '@src/services/storage';
 import { SetMetadata } from '@src/hooks/userMetadata';

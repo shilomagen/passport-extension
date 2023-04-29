@@ -15,12 +15,12 @@ describe('Date Range Picker', () => {
   beforeEach(() => driver.mount());
 
   describe('Default start and end dates values', () => {
-    it('should whens the start date to today`s date', async () => {
+    it('should init the start date to today`s date', async () => {
       const startDate = driver.userMetadataDriver.get.startDate();
       expect(startDate).toEqual(todayDate);
     });
 
-    it('should whens the end date to 14 days from today', async () => {
+    it('should init the end date to 14 days from today', async () => {
       const endDate = driver.userMetadataDriver.get.endDate();
       expect(endDate).toEqual(defaultEndDate);
     });
