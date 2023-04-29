@@ -1,14 +1,13 @@
 import React from 'react';
-import { App } from './App';
 import { PageBaseDriver } from '@test/RTL/RTLPageBaseDriver';
-import format from 'date-fns/format';
 import { IsraelDateFormat } from '@src/lib/utils';
+import format from 'date-fns/format';
 import addDays from 'date-fns/addDays';
 
 const todayDate = format(new Date(), IsraelDateFormat);
 const tomorrowDate = format(addDays(new Date(), 1), IsraelDateFormat);
 
-describe('App', () => {
+describe('Gamkenbot App', () => {
   const driver = new PageBaseDriver();
 
   beforeEach(() => driver.mount());
@@ -17,7 +16,7 @@ describe('App', () => {
     expect(driver.get.disconnectedStatus()).toBeInTheDocument();
   });
 
-  it('should enable start button when user fill all required fields and check the consent', async () => {
+  it('should enable start button when user fill all required fields and check consent', async () => {
     driver.userMetadataDriver.when.fillUserId('123456782');
     expect(driver.get.startButton()).toBeDisabled();
 
