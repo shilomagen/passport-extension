@@ -60,8 +60,8 @@
   border-radius: 40px;
 }
 .button:hover{
-  color: v.$light-blue-color;
-  border:1px solid green;
+  transform: scale(0.9);
+  color: v.$white-color !important;
 }
 .text{
   color:v.$white-color;
