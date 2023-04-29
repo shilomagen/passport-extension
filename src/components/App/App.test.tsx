@@ -27,79 +27,70 @@ describe('App', () => {
     driver.userMetadataDriver.when.selectCities(['תל אביב', 'גבעתיים']);
     expect(driver.get.startButton()).toBeDisabled();
 
-    driver.when.checkedConsent();
+    driver.when.clickConsent();
     expect(driver.get.startButton()).toBeEnabled();
   });
 
-  it('should disabled start button when user fill invalid phone number', () => {
-    driver.when.fillAllFields({
-      userId: '123456782',
-      phoneNumber: '0507277474',
-      cities: ['תל אביב', 'גבעתיים'],
-      startDate: todayDate,
-      endDate: tomorrowDate,
+  describe('Handle invalid metadata', () => {
+    beforeEach(() => {
+      driver.given.userMetadata({
+        userId: '123456782',
+        phoneNumber: '0507277474',
+        cities: ['תל אביב', 'גבעתיים'],
+        startDate: todayDate,
+        endDate: tomorrowDate,
+      });
+      driver.when.clickConsent();
     });
-    expect(driver.get.checkedConsent()).toBeChecked();
-    expect(driver.get.startButton()).toBeEnabled();
+    it('should disabled start button when user fill invalid phone number', () => {
+      expect(driver.get.startButton()).toBeEnabled();
 
-    // Invalid phone number
-    driver.userMetadataDriver.when.fillPhoneNumber('123abs');
-    expect(driver.userMetadataDriver.get.phoneNumber()).toEqual('123abs');
+      // Invalid phone number
+      driver.userMetadataDriver.when.fillPhoneNumber('123abs');
+      expect(driver.userMetadataDriver.get.phoneNumber()).toEqual('123abs');
 
-    expect(driver.get.startButton()).toBeDisabled();
-  });
-
-  it('should disabled start button when user fill invalid ID', () => {
-    driver.when.fillAllFields({
-      userId: '123456782',
-      phoneNumber: '0507277474',
-      cities: ['תל אביב', 'גבעתיים'],
-      startDate: todayDate,
-      endDate: tomorrowDate,
-    });
-    expect(driver.get.startButton()).toBeEnabled();
-
-    // Invalid ID
-    driver.userMetadataDriver.when.fillUserId('050741');
-    expect(driver.userMetadataDriver.get.userId()).toEqual('050741');
-
-    expect(driver.get.startButton()).toBeDisabled();
-  });
-
-  it('should disabled start button when user choose more than max cities ', () => {
-    driver.when.fillAllFields({
-      userId: '123456782',
-      phoneNumber: '0507277474',
-      cities: ['תל אביב'], // Invalid cities
-      startDate: todayDate,
-      endDate: tomorrowDate,
+      expect(driver.get.startButton()).toBeDisabled();
     });
 
-    expect(driver.get.startButton()).toBeEnabled();
+    it('should disabled start button when user fill invalid ID', () => {
+      expect(driver.get.startButton()).toBeEnabled();
 
-    // Invalid add 4 more cities
-    driver.userMetadataDriver.when.selectCities(['חדרה', 'גבעתיים', 'נתניה', 'כפר סבא']);
+      // Invalid ID
+      driver.userMetadataDriver.when.fillUserId('050741');
+      expect(driver.userMetadataDriver.get.userId()).toEqual('050741');
 
-    expect(driver.get.startButton()).toBeDisabled();
-  });
-
-  it('should disabled submit button when user choose invalid dates', () => {
-    driver.when.fillAllFields({
-      userId: '123456782',
-      phoneNumber: '0507277474',
-      cities: ['תל אביב', 'גבעתיים'],
-      startDate: todayDate,
-      endDate: tomorrowDate,
+      expect(driver.get.startButton()).toBeDisabled();
     });
-    expect(driver.get.startButton()).toBeEnabled();
 
-    // Invalid dates number
-    driver.userMetadataDriver.when.chooseStartDate(tomorrowDate);
-    driver.userMetadataDriver.when.chooseEndDate(todayDate);
+    it('should disabled start button when user choose more than max cities ', () => {
+      expect(driver.get.startButton()).toBeEnabled();
 
-    expect(driver.userMetadataDriver.get.startDate()).toEqual(tomorrowDate);
-    expect(driver.userMetadataDriver.get.endDate()).toEqual(todayDate);
+      // Invalid cities -  add 3 more (5 in total)
+      driver.userMetadataDriver.when.selectCities(['חדרה', 'נתניה', 'כפר סבא']);
 
-    expect(driver.get.startButton()).toBeDisabled();
+      expect(driver.get.startButton()).toBeDisabled();
+    });
+
+    it('should disabled start button when user choose invalid dates', () => {
+      expect(driver.get.startButton()).toBeEnabled();
+
+      // Invalid dates number
+      driver.userMetadataDriver.when.chooseStartDate(tomorrowDate);
+      driver.userMetadataDriver.when.chooseEndDate(todayDate);
+
+      expect(driver.userMetadataDriver.get.startDate()).toEqual(tomorrowDate);
+      expect(driver.userMetadataDriver.get.endDate()).toEqual(todayDate);
+
+      expect(driver.get.startButton()).toBeDisabled();
+    });
+
+    it('should disabled start button when user unchecked consent', () => {
+      expect(driver.get.startButton()).toBeEnabled();
+
+      // unchecked consent
+      driver.when.clickConsent();
+
+      expect(driver.get.startButton()).toBeDisabled();
+    });
   });
 });

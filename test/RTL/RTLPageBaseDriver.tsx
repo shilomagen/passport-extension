@@ -7,7 +7,7 @@ import { AppTestIds } from '@src/components/dataTestIds';
 import browser from 'webextension-polyfill';
 
 export class PageBaseDriver {
-  public renderResult!: RenderResult;
+  private renderResult!: RenderResult;
   public userMetadataDriver!: RTLUserMetadataDriver;
 
   async mount() {
@@ -28,18 +28,13 @@ export class PageBaseDriver {
 
     startButton: () => this.renderResult.getByTestId(AppTestIds.START_SEARCH_BUTTON),
 
-    checkedConsent: () => {
+    clickConsent: () => {
       return this.renderResult.getByTestId(AppTestIds.CONSENT_CHECKBOX);
     },
   };
 
-  when = {
-    checkedConsent: () => {
-      const checkbox = this.renderResult.getByTestId(AppTestIds.CONSENT_CHECKBOX);
-      fireEvent.click(checkbox);
-    },
-
-    fillAllFields: (props: {
+  given = {
+    userMetadata: (props: {
       userId: string;
       phoneNumber: string;
       cities: string[];
@@ -51,7 +46,13 @@ export class PageBaseDriver {
       this.userMetadataDriver.when.selectCities(props.cities);
       this.userMetadataDriver.when.chooseStartDate(props.startDate);
       this.userMetadataDriver.when.chooseEndDate(props.endDate);
-      this.when.checkedConsent();
+    },
+  };
+
+  when = {
+    clickConsent: () => {
+      const checkbox = this.renderResult.getByTestId(AppTestIds.CONSENT_CHECKBOX);
+      fireEvent.click(checkbox);
     },
   };
 }
