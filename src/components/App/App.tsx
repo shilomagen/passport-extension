@@ -34,7 +34,6 @@ export const App: FunctionComponent = () => {
   };
 
   const submitEnabled = consent && isValidMetadata;
-  console.log('consent', consent);
 
   const getMyVisitTab = async (): Promise<Tab | null> => {
     const [tab] = await browser.tabs.query({
