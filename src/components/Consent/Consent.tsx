@@ -2,6 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { Checkbox } from 'antd';
 import { consent as Content } from '@src/content.json';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { AppTestIds } from '@src/components/dataTestIds';
 
 const TERMS_AND_CONDITIONS_URL = 'https://myvisit.com/templates/directives/termsDialog.html';
 
@@ -21,7 +22,7 @@ export const Consent: FunctionComponent<IConsentProps> = ({ onConsentChanged, co
   const onCheckboxChanged = (e: CheckboxChangeEvent) => onConsentChanged(e.target.checked);
 
   return (
-    <Checkbox onChange={onCheckboxChanged} checked={consent}>
+    <Checkbox onChange={onCheckboxChanged} checked={consent} data-testid={AppTestIds.CONSENT_CHECKBOX}>
       {Content.prefix}{' '}
       <a href="" onClick={onTermsAndConditionsClick}>
         {Content.termsAndConditions}

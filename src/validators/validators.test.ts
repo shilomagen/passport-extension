@@ -22,24 +22,16 @@ describe('validateIsraeliIdNumber', () => {
 });
 
 describe('validateNumberOfAllowedCities', () => {
-  it('should return true for null input', () => {
-    expect(validateNumberOfAllowedCities(null)).toBe(true);
+  it('should return false for empty array input', () => {
+    expect(validateNumberOfAllowedCities([])).toBe(false);
   });
 
-  it('should return true for undefined input', () => {
-    expect(validateNumberOfAllowedCities(undefined)).toBe(true);
+  it('should return true for array input with 4 or fewer elements', () => {
+    expect(validateNumberOfAllowedCities(['city1', 'city2', 'city3', 'city4'])).toBe(true);
   });
 
-  it('should return true for empty array input', () => {
-    expect(validateNumberOfAllowedCities([])).toBe(true);
-  });
-
-  it('should return false for array input with 4 or fewer elements', () => {
-    expect(validateNumberOfAllowedCities(['city1', 'city2', 'city3', 'city4'])).toBe(false);
-  });
-
-  it('should return true for array input with more than 4 elements', () => {
-    expect(validateNumberOfAllowedCities(['city1', 'city2', 'city3', 'city4', 'city5'])).toBe(true);
+  it('should return false for array input with more than 4 elements', () => {
+    expect(validateNumberOfAllowedCities(['city1', 'city2', 'city3', 'city4', 'city5'])).toBe(false);
   });
 });
 

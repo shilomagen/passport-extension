@@ -22,11 +22,8 @@ export const validatePhoneNumber = (inputString: string): boolean => {
   return regex.test(inputString);
 };
 
-export const validateNumberOfAllowedCities = (cities: string[] | null | undefined): boolean => {
-  if (!cities || cities.length === 0) {
-    return true;
-  }
-  return cities.length > 4;
+export const validateNumberOfAllowedCities = (cities: string[]): boolean => {
+  return cities.length > 0 && cities.length <= 4;
 };
 
 export const validateEndDate = (date: Dayjs, startDate?: Dayjs): boolean => {
