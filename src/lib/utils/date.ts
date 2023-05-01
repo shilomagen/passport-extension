@@ -1,14 +1,18 @@
 import format from 'date-fns/format';
-import differenceInDays from 'date-fns/differenceInDays';
 
 const ApiDateFormat = 'yyyy-MM-dd';
-const IsraelDateFormat = 'dd-MM-yyyy';
+export const IsraelDateFormat = 'dd-MM-yyyy';
 
 const padIfNeeded = (digit: number) => (`${digit}`.length === 1 ? `0${digit}` : `${digit}`);
 
 export const DateUtils = {
-  isDateInDaysRange: (date: string, maxDaysDifference: number) =>
-    differenceInDays(new Date(date), new Date()) < maxDaysDifference,
+  isDateInRange: (date: string, startDate: Date, endDate: Date): boolean => {
+    const dateFormat = new Date(date);
+    return dateFormat >= startDate && dateFormat <= endDate;
+  },
+  isEqual: (currentDate: Date, compareDate: Date): boolean => currentDate.getTime() === compareDate.getTime(),
+  isBefore: (currentDate: Date, compareDate: Date): boolean => currentDate < compareDate,
+  isAfter: (currentDate: Date, compareDate: Date): boolean => currentDate > compareDate,
   timeSinceMidnightToHour: (timeSinceMidnight: number): string =>
     `${padIfNeeded(Math.floor(timeSinceMidnight / 60))}:${padIfNeeded(timeSinceMidnight % 60)}`,
   toApiFormattedDate: (date: string | number) => format(new Date(date), ApiDateFormat),

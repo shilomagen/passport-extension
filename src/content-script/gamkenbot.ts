@@ -2,7 +2,6 @@ import { Worker, WorkerConfig } from '@src/content-script/worker';
 import { StorageService } from '@src/services/storage';
 import { HttpService } from '@src/lib/http';
 import { VisitService } from '@src/lib/visit';
-import differenceInDays from 'date-fns/differenceInDays';
 import { ResponseStatus } from '@src/lib/internal-types';
 import { Locations } from '@src/lib/locations';
 
@@ -35,7 +34,6 @@ export class Gamkenbot {
       return false;
     }
 
-    const daysDiff = differenceInDays(new Date(info.lastDate), new Date());
     const preparedVisit = await visitService.prepare(info);
 
     if (preparedVisit.status === ResponseStatus.Success) {
@@ -44,7 +42,10 @@ export class Gamkenbot {
       const config: WorkerConfig = {
         locations,
         userVisit: preparedVisit.data,
-        maxDaysUntilAppointment: daysDiff,
+        dateRangeForAppointment: {
+          startDate: info.startDate,
+          endDate: info.endDate,
+        },
         httpService: httpService,
       };
       await this.worker.start(config);

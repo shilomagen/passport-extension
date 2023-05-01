@@ -44,6 +44,11 @@ export interface User {
   phone: string;
 }
 
+export interface DateRange {
+  startDate: number;
+  endDate: number;
+}
+
 export interface UserVisitSuccessData {
   visitId: number;
   visitToken: string;
