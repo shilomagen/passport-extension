@@ -31,6 +31,10 @@
     "title": "עד תאריך:",
     "placeholder": "בחרו תאריך אחרון לתור..."
   },
+  "version": {
+    "versionNumber": "גרסה",
+    "checkForUpdates": "בדקו עדכון"
+  },
   "title": "גם כן בוט",
   "consent": {
     "prefix": "בהרצת הבוט, אתם מאשרים את",
