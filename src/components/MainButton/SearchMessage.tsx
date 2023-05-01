@@ -15,6 +15,8 @@ export const SearchMessage: FC<SearchMessageProps> = ({ searchStatus }) => {
       ? styles.error
       : searchStatus.type === SearchStatusType.Warning
       ? styles.warning
+      : searchStatus.type === SearchStatusType.Complete
+      ? styles.success
       : '';
 
   return (

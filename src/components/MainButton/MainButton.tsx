@@ -1,10 +1,9 @@
 import React, { FC } from 'react';
 import { Button } from 'antd';
 import browser from 'webextension-polyfill';
-import { SearchStatusType } from '@src/lib/internal-types';
-import { ActionTypes } from '@src/platform-message';
+import { SearchStatus, SearchStatusType } from '@src/lib/internal-types';
+import { ActionTypes, PlatformMessage } from '@src/platform-message';
 import { buttons as Content } from '@src/content.json';
-import { getMyVisitTab } from '@src/lib/utils/tabs';
 import styles from './MainButton.scss';
 import { AppTestIds } from '../dataTestIds';
 
@@ -13,17 +12,14 @@ interface MainButtonProps {
   enabled: boolean;
 }
 
-const sendMessageToMyVisitTab = async (action: ActionTypes) => {
-  const maybeMyVisitTab = await getMyVisitTab();
-  if (maybeMyVisitTab) {
-    await browser.tabs.sendMessage(maybeMyVisitTab.id!, { action });
-  }
+const send = async (action: ActionTypes) => {
+  await browser.runtime.sendMessage({ action } as PlatformMessage);
 };
 
 export const MainButton: FC<MainButtonProps> = ({ searchStatusType, enabled }) => {
   const BUTTON_CONFIGURATIONS = {
     STOP: {
-      onClick: () => sendMessageToMyVisitTab(ActionTypes.StopSearch),
+      onClick: () => send(ActionTypes.StopSearch),
       'data-testid': AppTestIds.STOP_SEARCH_BUTTON,
       content: Content.stopSearch,
     },
@@ -32,7 +28,7 @@ export const MainButton: FC<MainButtonProps> = ({ searchStatusType, enabled }) =
       content: Content.waiting,
     },
     START: {
-      onClick: () => sendMessageToMyVisitTab(ActionTypes.StartSearch),
+      onClick: () => send(ActionTypes.StartSearch),
       'data-testid': AppTestIds.START_SEARCH_BUTTON,
       content: Content.search,
       disabled: !enabled,

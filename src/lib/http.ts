@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
+import fetchAdapter from '@vespaiach/axios-fetch-adapter';
 import { ServiceIds } from './constants';
 import {
   AnswerQuestionRequest,
@@ -46,28 +47,42 @@ export const Urls = {
 };
 
 export class HttpService {
-  private readonly httpClient: AxiosInstance;
+  private readonly errorHandler: (err: AxiosError) => Promise<void>;
 
-  constructor(errorHandler: (err: AxiosError) => Promise<void>) {
-    this.httpClient = axios.create({
-      headers: {
-        // MyVisit default configuration
-        'application-api-key': 'D7662A08-48D1-4BC8-9E45-7F9DDF8987E3',
-        'application-name': 'PibaV1',
-        'accept-language': 'en',
-      },
-      withCredentials: true,
-    });
-
-    this.addRejectInterceptor(errorHandler);
-  }
-
-  public updateVisitToken = (visitToken: string): void => {
-    this.httpClient.defaults.headers['Preparedvisittoken'] = visitToken;
+  private httpClient: AxiosInstance;
+  private static readonly DEFAULT_HEADERS = {
+    // MyVisit default configuration
+    'application-api-key': 'D7662A08-48D1-4BC8-9E45-7F9DDF8987E3',
+    'application-name': 'PibaV1',
+    'accept-language': 'en',
   };
 
-  public addRejectInterceptor = (errorHandler: (err: AxiosError) => Promise<void>): void => {
-    this.httpClient.interceptors.response.use(
+  constructor(errorHandler: (err: AxiosError) => Promise<void>) {
+    this.errorHandler = errorHandler;
+    this.httpClient = this.setupClient();
+  }
+
+  private setupClient = (headers: Record<string, string> = {}): AxiosInstance => {
+    const instance = axios.create({
+      adapter: fetchAdapter,
+      withCredentials: true,
+      headers: {
+        ...HttpService.DEFAULT_HEADERS,
+        ...headers,
+      },
+    });
+
+    this.addRejectInterceptor(instance, this.errorHandler);
+
+    return instance;
+  };
+
+  public updateVisitToken = (visitToken: string): void => {
+    this.httpClient = this.setupClient({ Preparedvisittoken: visitToken });
+  };
+
+  public addRejectInterceptor = (instance: AxiosInstance, errorHandler: (err: AxiosError) => Promise<void>): void => {
+    instance.interceptors.response.use(
       (res) => res,
       async (error: AxiosError) => {
         await errorHandler(error);
@@ -123,13 +138,10 @@ export class HttpService {
       .then((res) => res.data.Data);
   }
 
-  public setAppointment(visitToken: string, params: AppointmentSetRequest): Promise<AppointmentSetResponse | null> {
+  public setAppointment(params: AppointmentSetRequest): Promise<AppointmentSetResponse | null> {
     return this.httpClient
       .get<AppointmentSetResponse>(Urls.setAppointment, {
         params,
-        headers: {
-          PreparedVisitToken: visitToken,
-        },
       })
       .then((res) => res.data);
   }

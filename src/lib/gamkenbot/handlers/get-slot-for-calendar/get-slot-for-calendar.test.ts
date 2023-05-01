@@ -2,7 +2,7 @@ import { HandlersDriver } from '@test/handlers.driver';
 import { SearchAvailableSlotsResponseFixtures } from '@test/fixtures/search-available-slots-response.fixture';
 import { Locations } from '@src/lib/locations';
 import { EnrichedService } from '@src/lib/internal-types';
-import { Priority, ScheduleAppointmentTask, TaskType } from '@src/content-script/task';
+import { Priority, ScheduleAppointmentTask, TaskType } from '@src/lib/gamkenbot/task';
 
 describe('[GetSlotForCalendar Handler]', () => {
   const driver = new HandlersDriver();
