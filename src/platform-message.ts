@@ -5,6 +5,7 @@ export enum ActionTypes {
   StartSearch = 'START_SEARCH',
   StopSearch = 'STOP_SEARCH',
   SetSearchStatus = 'SET_SEARCH_STATUS',
+  RefreshAntiBotCookies = 'REFRESH_ANTI_BOT_COOKIE',
 }
 
 interface IsLoggedInMessage {
@@ -24,4 +25,13 @@ interface SearchStatusMessage {
   status: SearchStatus;
 }
 
-export type PlatformMessage = IsLoggedInMessage | StartSearchMessage | StopSearchMessage | SearchStatusMessage;
+interface RefreshAntiBotCookiesMessage {
+  action: ActionTypes.RefreshAntiBotCookies;
+}
+
+export type PlatformMessage =
+  | IsLoggedInMessage
+  | StartSearchMessage
+  | StopSearchMessage
+  | SearchStatusMessage
+  | RefreshAntiBotCookiesMessage;

@@ -3,10 +3,18 @@ import { StorageService } from '@src/services/storage';
 import { ActionTypes, PlatformMessage } from '@src/platform-message';
 import { SearchStatusType } from '@src/lib/internal-types';
 import { dispatchSearchStatus } from '@src/lib/utils/status';
+import { refreshAntibotSession } from '@src/lib/antibot/refresh-antibot-session';
 
 const storageService = new StorageService();
 
 const VALID_COOKIES_NAMES = ['CentralJwtAnonymous', 'CentralJWTCookie'];
+
+let maybeTab: browser.Tabs.Tab | undefined;
+const findContentTab = async (): Promise<browser.Tabs.Tab | undefined> => {
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+
+  return tab;
+};
 
 browser.webNavigation.onCompleted.addListener(
   async () => {
@@ -16,13 +24,30 @@ browser.webNavigation.onCompleted.addListener(
       }
     });
 
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    maybeTab = await findContentTab();
+    if (maybeTab) {
+      await browser.tabs.sendMessage(maybeTab.id!, { action: ActionTypes.IsLoggedIn } as PlatformMessage);
+    }
 
-    await browser.tabs.sendMessage(tab.id!, { action: ActionTypes.IsLoggedIn } as PlatformMessage);
     await dispatchSearchStatus({ type: SearchStatusType.Stopped });
   },
   { url: [{ hostSuffix: '.myvisit.com' }] },
 );
+
+browser.runtime.onMessage.addListener(async (message: PlatformMessage) => {
+  if (message.action === ActionTypes.SetSearchStatus && message.status.type === SearchStatusType.Restarting) {
+    try {
+      await refreshAntibotSession();
+
+      // Resume the search
+      if (maybeTab) {
+        await browser.tabs.sendMessage(maybeTab.id!, { action: ActionTypes.StartSearch } as PlatformMessage);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+});
 
 // Migration scripts
 browser.runtime.onInstalled.addListener(async (details) => {
