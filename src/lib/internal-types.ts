@@ -85,6 +85,7 @@ export enum SearchStatusType {
   Warning = 'SEARCH_WARNING',
   Error = 'SEARCH_ERROR',
   Stopped = 'SEARCH_STOPPED',
+  Restarting = 'SEARCH_RESTARTING',
 }
 
 export interface SearchStatus {

@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import { AxiosError } from 'axios';
 import { Worker, WorkerConfig } from '@src/content-script/worker';
 import { StorageService } from '@src/services/storage';
@@ -17,6 +18,9 @@ export class Gamkenbot {
       this.worker.stop();
       dispatchSearchStatus({ type: SearchStatusType.Error, message: Content.authError });
       await this.storageService.setLoggedIn(false);
+    } else if (error.code === 'ERR_NETWORK') {
+      this.worker.stop();
+      dispatchSearchStatus({ type: SearchStatusType.Restarting });
     } else {
       dispatchSearchStatus({ type: SearchStatusType.Warning, message: Content.failingRequests });
     }

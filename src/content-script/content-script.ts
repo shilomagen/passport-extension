@@ -11,5 +11,6 @@ browser.runtime.onMessage.addListener((message: PlatformMessage) => {
     .with({ action: ActionTypes.StartSearch }, gamkenbot.startSearching)
     .with({ action: ActionTypes.StopSearch }, gamkenbot.stopSearching)
     .with({ action: ActionTypes.SetSearchStatus }, () => null)
+    .with({ action: ActionTypes.RefreshAntiBotCookies }, () => null)
     .exhaustive();
 });
