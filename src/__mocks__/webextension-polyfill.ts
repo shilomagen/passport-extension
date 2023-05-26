@@ -41,6 +41,9 @@ const browser: any = {
       addListener: () => null,
     },
   },
+  action: {
+    setIcon: jest.fn(),
+  },
 };
 export default browser;
 
