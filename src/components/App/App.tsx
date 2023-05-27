@@ -29,9 +29,17 @@ export const App: FunctionComponent = () => {
   }, []);
 
   useEffect(() => {
-    const listener = (message: PlatformMessage) => {
+    const listener = async (message: PlatformMessage) => {
       if (message.action == ActionTypes.SetSearchStatus) {
         setSearchStatus(message.status);
+
+        if (message.status.type == SearchStatusType.Stopped) {
+          await browser.action.setIcon({ path: 'assets/gamkenbot.png' });
+        } else if ([SearchStatusType.Error, SearchStatusType.Warning].some(message?.status?.type as any)) {
+          await browser.action.setIcon({ path: 'assets/gamkenbot-error.png' });
+        } else {
+          await browser.action.setIcon({ path: 'assets/gamkenbot-searching.png' });
+        }
       }
     };
 
